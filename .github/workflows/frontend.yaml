@@ -61,3 +61,6 @@ jobs:
 
       - name: Execute test suite
         run: npm run test:frontend
+
+      - name: Execute agent workspace structural tests
+        run: npm run test:agent

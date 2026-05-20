@@ -38,3 +38,25 @@ jobs:
 
       - name: Verify formatting
         run: ruff format --check . --exclude .venv --exclude venv
+
+  unit-tests:
+    name: Pytest (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11']
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: pip install pytest pytest-asyncio fastapi pydantic
+
+      - name: Run backend unit tests
+        working-directory: backend
+        run: pytest tests -q

@@ -748,6 +748,13 @@ if LICENSE_PUBLIC_KEY:
 
 WEBUI_NAME = os.getenv('WEBUI_NAME', 'Kolb-Bot')
 
+# noVNC live browser artifact (password must come from env, never from frontend source)
+BROWSER_ARTIFACT_VNC_PATH = os.getenv(
+    'BROWSER_ARTIFACT_VNC_PATH',
+    '/browser/vnc.html?autoconnect=1&resize=scale&reconnect=1&reconnect_delay=1000&path=browser/websockify',
+)
+BROWSER_VNC_PASSWORD = os.getenv('BROWSER_VNC_PASSWORD', '')
+
 WEBUI_FAVICON_URL = 'https://openwebui.com/favicon.png'
 WEBUI_BUILD_HASH = os.getenv('WEBUI_BUILD_HASH', 'dev-build')
 TRUSTED_SIGNATURE_KEY = os.getenv('TRUSTED_SIGNATURE_KEY', '')

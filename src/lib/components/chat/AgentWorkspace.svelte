@@ -1,15 +1,20 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { Pane, PaneResizer } from 'paneforge';
 	import { onMount, tick } from 'svelte';
+	import type { AgentControlMode } from '$lib/utils/agentBrowser';
 	import Computer from '$lib/components/icons/Computer.svelte';
 	import Terminal from '$lib/components/icons/Terminal.svelte';
 	import XMark from '$lib/components/icons/XMark.svelte';
 	import AgentBrowserShell from './AgentBrowserShell.svelte';
 	import XTerminal from './XTerminal.svelte';
 
+	const i18n = getContext('i18n');
+
 	export let open = false;
 	export let mobile = false;
 	export let browserUrl = '';
+	export let controlMode: AgentControlMode = 'agent';
 	export let statusEntries: Array<{
 		done?: boolean;
 		action?: string;
@@ -83,10 +88,10 @@
 		localStorage.agentWorkspaceSize = `${Math.round(clampWorkspaceSize(size))}`;
 	};
 
-	const tabs: Array<{ id: WorkspaceTab; label: string }> = [
-		{ id: 'browser', label: 'Browser' },
-		{ id: 'steps', label: 'Steps' },
-		{ id: 'terminal', label: 'Terminal' }
+	const tabs: Array<{ id: WorkspaceTab; labelKey: string }> = [
+		{ id: 'browser', labelKey: 'Agent workspace tab browser' },
+		{ id: 'steps', labelKey: 'Agent workspace tab steps' },
+		{ id: 'terminal', labelKey: 'Agent workspace tab terminal' }
 	];
 
 	onMount(() => {
@@ -133,9 +138,11 @@
 						<Computer className="size-4" />
 					</div>
 					<div class="min-w-0">
-						<div class="truncate text-sm font-semibold">Agent workspace</div>
+						<div class="truncate text-sm font-semibold">{$i18n.t('Agent workspace')}</div>
 						<div class="truncate text-xs text-gray-500 dark:text-gray-400">
-							{activeTab === 'terminal' ? terminalStateLabel : 'Live browser automation'}
+							{activeTab === 'terminal'
+								? terminalStateLabel
+								: $i18n.t('Live browser automation')}
 						</div>
 					</div>
 				</div>
@@ -161,7 +168,7 @@
 								: 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'}"
 							on:click={() => (activeTab = tab.id)}
 						>
-							{tab.label}
+							{$i18n.t(tab.labelKey)}
 						</button>
 					{/each}
 				</div>
@@ -170,20 +177,27 @@
 			<div class="min-h-0 flex-1 p-2.5">
 				{#if activeTab === 'browser'}
 					<div class="workspace-frame h-full min-h-0">
-						<AgentBrowserShell {browserUrl} {statusEntries} onPause={onPause} onTakeOver={onTakeOver} onResume={onResume} />
+						<AgentBrowserShell
+							{browserUrl}
+							{controlMode}
+							{statusEntries}
+							onPause={onPause}
+							onTakeOver={onTakeOver}
+							onResume={onResume}
+						/>
 					</div>
 				{:else if activeTab === 'steps'}
 					<div
 						class="h-full overflow-y-auto rounded-2xl bg-white/85 p-4 shadow-sm ring-1 ring-black/5 backdrop-blur dark:bg-gray-900/70 dark:ring-white/10"
 					>
 						<div class="mb-4 flex items-center justify-between gap-3">
-							<div class="text-sm font-semibold">Agent steps</div>
+							<div class="text-sm font-semibold">{$i18n.t('Agent steps')}</div>
 							<div class="text-xs text-gray-400">{visibleStatusEntries.length} visible</div>
 						</div>
 
 						{#if visibleStatusEntries.length === 0}
 							<div class="rounded-2xl border border-dashed border-gray-200/80 p-5 text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400">
-								No agent steps yet.
+								{$i18n.t('No agent steps yet.')}
 							</div>
 						{:else}
 							<div class="space-y-1.5">
@@ -292,7 +306,7 @@
 							<Computer className="size-4" />
 						</div>
 						<div class="min-w-0">
-							<div class="truncate text-sm font-semibold">Agent workspace</div>
+							<div class="truncate text-sm font-semibold">{$i18n.t('Agent workspace')}</div>
 							<div class="flex items-center gap-1.5 truncate text-xs text-gray-500 dark:text-gray-400">
 								<span
 									class="size-1.5 rounded-full {activeTab === 'terminal' && terminalConnected
@@ -301,7 +315,9 @@
 											? 'bg-yellow-400 animate-pulse'
 											: 'bg-cyan-500'}"
 								></span>
-								{activeTab === 'terminal' ? terminalStateLabel : 'Visible Playwright browser'}
+								{activeTab === 'terminal'
+									? terminalStateLabel
+									: $i18n.t('Visible Playwright browser')}
 							</div>
 						</div>
 					</div>
@@ -327,7 +343,7 @@
 									: 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100'}"
 								on:click={() => (activeTab = tab.id)}
 							>
-								{tab.label}
+								{$i18n.t(tab.labelKey)}
 							</button>
 						{/each}
 					</div>
@@ -336,20 +352,27 @@
 				<div class="min-h-0 flex-1 p-3">
 					{#if activeTab === 'browser'}
 						<div class="workspace-frame h-full min-h-0">
-							<AgentBrowserShell {browserUrl} {statusEntries} onPause={onPause} onTakeOver={onTakeOver} onResume={onResume} />
+							<AgentBrowserShell
+								{browserUrl}
+								{controlMode}
+								{statusEntries}
+								onPause={onPause}
+								onTakeOver={onTakeOver}
+								onResume={onResume}
+							/>
 						</div>
 					{:else if activeTab === 'steps'}
 						<div
 							class="h-full overflow-y-auto rounded-2xl bg-white/85 p-4 shadow-sm ring-1 ring-black/5 backdrop-blur dark:bg-gray-900/70 dark:ring-white/10"
 						>
 							<div class="mb-4 flex items-center justify-between gap-3">
-								<div class="text-sm font-semibold">Agent steps</div>
+								<div class="text-sm font-semibold">{$i18n.t('Agent steps')}</div>
 								<div class="text-xs text-gray-400">{visibleStatusEntries.length} visible</div>
 							</div>
 
 							{#if visibleStatusEntries.length === 0}
 								<div class="rounded-2xl border border-dashed border-gray-200/80 p-5 text-sm text-gray-500 dark:border-gray-800 dark:text-gray-400">
-									No agent steps yet.
+									{$i18n.t('No agent steps yet.')}
 								</div>
 							{:else}
 								<div class="space-y-1.5">

@@ -7,48 +7,39 @@
 	import Link from '$lib/components/icons/Link.svelte';
 	import Refresh from '$lib/components/icons/Refresh.svelte';
 	import Sparkles from '$lib/components/icons/Sparkles.svelte';
+	import BrowserApprovalPrompt from './agent/BrowserApprovalPrompt.svelte';
+	import {
+		type AgentControlMode,
+		type AgentStatusEntry,
+		findApprovalEntry,
+		getBrowserAddress,
+		getControlModeClass,
+		getModeRibbonDescription,
+		getModeRibbonLabel,
+		getStatusDescription,
+		getStatusOverlayLabel,
+		labelForAction
+	} from '$lib/utils/agentBrowser';
 
 	export let browserUrl = '';
-	type StatusEntry = {
-		done?: boolean;
-		action?: string;
-		description?: string;
-		urls?: string[];
-		query?: string;
-		hidden?: boolean;
-	};
-
-	export let statusEntries: StatusEntry[] = [];
+	export let statusEntries: AgentStatusEntry[] = [];
 	export let showAgentControls = true;
+	export let controlMode: AgentControlMode = 'agent';
 	export let onPause: () => void | Promise<void> = async () => {};
 	export let onTakeOver: () => void | Promise<void> = async () => {};
 	export let onResume: () => void | Promise<void> = async () => {};
-
-	type ControlMode = 'agent' | 'user' | 'paused';
 
 	let iframeElement: HTMLIFrameElement | null = null;
 	let reloadKey = 0;
 	let browserLoaded = false;
 	let browserFailed = false;
-	let controlMode: ControlMode = 'agent';
 	let approvalDismissed = false;
 	let loadFallbackTimer: ReturnType<typeof setTimeout> | null = null;
 
 	$: visibleStatusEntries = statusEntries.filter((entry) => !entry?.hidden);
 	$: latestEntry = visibleStatusEntries.at(-1) ?? null;
 	$: latestText = `${latestEntry?.action ?? ''} ${latestEntry?.description ?? ''} ${latestEntry?.query ?? ''}`.toLowerCase();
-	$: approvalEntry =
-		approvalDismissed
-			? null
-			: visibleStatusEntries.find((entry) => {
-					const text = `${entry?.action ?? ''} ${entry?.description ?? ''}`.toLowerCase();
-					return (
-						text.includes('approval') ||
-						text.includes('permission') ||
-						text.includes('confirm') ||
-						text.includes('submit')
-					);
-				}) ?? null;
+	$: approvalEntry = findApprovalEntry(visibleStatusEntries, approvalDismissed);
 	$: recentActions = visibleStatusEntries.slice(-5).reverse();
 	$: browserAddress = getBrowserAddress(browserUrl);
 	$: controlModeClass = getControlModeClass(browserFailed, approvalEntry, controlMode);
@@ -58,6 +49,7 @@
 	$: statusOverlayLabel = getStatusOverlayLabel(
 		browserFailed,
 		browserLoaded,
+		visibleStatusEntries.length,
 		approvalEntry,
 		controlMode,
 		latestText
@@ -65,6 +57,7 @@
 	$: statusDescription = getStatusDescription(
 		browserFailed,
 		browserLoaded,
+		visibleStatusEntries.length,
 		approvalEntry,
 		controlMode,
 		latestEntry
@@ -74,20 +67,41 @@
 	$: clickActive = latestText.includes('click') || latestText.includes('press');
 	$: typingActive = latestText.includes('typ') || latestText.includes('fill');
 
-	const reloadBrowser = () => {
-		browserLoaded = false;
-		browserFailed = false;
-		reloadKey += 1;
-
+	const scheduleLoadFallback = () => {
 		if (loadFallbackTimer) {
 			clearTimeout(loadFallbackTimer);
 		}
 
 		loadFallbackTimer = setTimeout(() => {
-			if (browserUrl && !browserFailed) {
+			if (browserUrl && !browserFailed && !browserLoaded) {
 				browserLoaded = true;
 			}
-		}, 1600);
+		}, 8000);
+	};
+
+	const handleBrowserLoad = () => {
+		browserLoaded = true;
+		browserFailed = false;
+		if (loadFallbackTimer) {
+			clearTimeout(loadFallbackTimer);
+			loadFallbackTimer = null;
+		}
+	};
+
+	const handleBrowserError = () => {
+		browserFailed = true;
+		browserLoaded = false;
+		if (loadFallbackTimer) {
+			clearTimeout(loadFallbackTimer);
+			loadFallbackTimer = null;
+		}
+	};
+
+	const reloadBrowser = () => {
+		browserLoaded = false;
+		browserFailed = false;
+		reloadKey += 1;
+		scheduleLoadFallback();
 	};
 
 	const openFullscreen = () => {
@@ -95,31 +109,26 @@
 	};
 
 	const takeOver = async () => {
-		controlMode = 'user';
 		approvalDismissed = true;
 		await onTakeOver();
 	};
 
 	const pauseAgent = async () => {
-		controlMode = 'paused';
 		await onPause();
 	};
 
 	const resumeAgent = async () => {
-		controlMode = 'agent';
 		approvalDismissed = false;
 		await onResume();
 	};
 
 	const approveAgentAction = async () => {
 		approvalDismissed = true;
-		controlMode = 'agent';
 		await onResume();
 	};
 
 	const rejectAgentAction = async () => {
 		approvalDismissed = true;
-		controlMode = 'paused';
 		await onPause();
 	};
 
@@ -135,108 +144,16 @@
 		await resumeAgent();
 	};
 
-	const getBrowserAddress = (url: string) => {
-		if (!url) return 'Live browser session';
-
-		try {
-			const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
-			const parsed = new URL(url, baseUrl);
-			if (parsed.protocol === 'data:' || parsed.protocol === 'blob:') return 'Live browser session';
-			return `${parsed.host}${parsed.pathname === '/' ? '' : parsed.pathname}`;
-		} catch {
-			return url;
-		}
-	};
-
-	const getControlModeClass = (
-		isBrowserFailed: boolean,
-		pendingApproval: StatusEntry | null,
-		mode: ControlMode
-	) => {
-		if (isBrowserFailed) return 'mode-disconnected';
-		if (pendingApproval) return 'mode-approval';
-		return `mode-${mode}`;
-	};
-
-	const getModeRibbonLabel = (
-		isBrowserFailed: boolean,
-		pendingApproval: StatusEntry | null,
-		mode: ControlMode
-	) => {
-		if (isBrowserFailed) return 'Disconnected';
-		if (pendingApproval) return 'Approval needed';
-		if (mode === 'user') return 'You control';
-		if (mode === 'paused') return 'Paused';
-		return 'Agent control';
-	};
-
-	const getModeRibbonDescription = (
-		isBrowserFailed: boolean,
-		pendingApproval: StatusEntry | null,
-		mode: ControlMode,
-		working: boolean
-	) => {
-		if (isBrowserFailed) return 'Browser needs reconnect';
-		if (pendingApproval) return 'Waiting for your decision';
-		if (mode === 'user') return 'Keyboard and pointer are yours';
-		if (mode === 'paused') return 'Automation is stopped';
-		return working ? 'Working in the browser' : 'Ready for the next step';
-	};
-
-	const getStatusOverlayLabel = (
-		isBrowserFailed: boolean,
-		isBrowserLoaded: boolean,
-		pendingApproval: StatusEntry | null,
-		mode: ControlMode,
-		actionText: string
-	) => {
-		if (isBrowserFailed) return 'Disconnected';
-		if (!isBrowserLoaded && visibleStatusEntries.length === 0) return 'Connecting';
-		if (pendingApproval) return 'Waiting for approval';
-		if (mode === 'user') return 'User controlling';
-		if (mode === 'paused') return 'Paused';
-		if (actionText.includes('click')) return 'Clicking';
-		if (actionText.includes('typ') || actionText.includes('fill')) return 'Typing';
-		if (actionText.includes('read') || actionText.includes('scan')) return 'Reading page';
-		if (actionText.includes('wait')) return 'Waiting for page';
-		if (actionText.includes('screenshot') || actionText.includes('capture')) return 'Taking screenshot';
-		return 'Agent working';
-	};
-
-	const getStatusDescription = (
-		isBrowserFailed: boolean,
-		isBrowserLoaded: boolean,
-		pendingApproval: StatusEntry | null,
-		mode: ControlMode,
-		entry: StatusEntry | null
-	) => {
-		if (isBrowserFailed) return 'The live browser stopped responding. Reconnect to restore the view.';
-		if (!isBrowserLoaded && visibleStatusEntries.length === 0) return 'Opening the live browser session.';
-		if (pendingApproval) return pendingApproval.description || pendingApproval.action || 'The agent needs your decision.';
-		if (mode === 'user') return 'Take the action yourself, then resume the agent when ready.';
-		if (mode === 'paused') return 'The agent is stopped until you resume it.';
-		return entry?.description || entry?.action || 'Reading the page and choosing the next browser action.';
-	};
-
-	const labelForAction = (entry: StatusEntry) => {
-		const text = `${entry?.action ?? ''} ${entry?.description ?? ''}`.toLowerCase();
-		if (text.includes('click')) return 'Clicking button';
-		if (text.includes('typ') || text.includes('fill')) return 'Typing';
-		if (text.includes('screenshot') || text.includes('capture')) return 'Capturing screen';
-		if (text.includes('link') || text.includes('open')) return 'Opening link';
-		if (text.includes('wait')) return 'Waiting for page';
-		if (text.includes('approval') || text.includes('permission')) return 'Needs approval';
-		if (text.includes('error') || text.includes('failed')) return 'Error';
-		if (text.includes('read') || text.includes('scan')) return 'Reading content';
-		return entry?.action || 'Looking at page';
-	};
+	$: if (browserUrl) {
+		browserLoaded = false;
+		browserFailed = false;
+		scheduleLoadFallback();
+	}
 
 	onMount(() => {
-		loadFallbackTimer = setTimeout(() => {
-			if (browserUrl && !browserFailed) {
-				browserLoaded = true;
-			}
-		}, 1600);
+		if (browserUrl) {
+			scheduleLoadFallback();
+		}
 	});
 
 	onDestroy(() => {
@@ -384,42 +301,13 @@
 					{/if}
 
 					{#if approvalEntry}
-						<div class="approval-scrim absolute inset-0 z-50 flex items-center justify-center p-5">
-							<div class="max-w-md rounded-[1.6rem] border border-white/36 bg-white/84 p-5 text-center text-slate-950 shadow-[0_25px_90px_rgba(15,23,42,0.28)] backdrop-blur-2xl">
-								<div class="mx-auto mb-3 flex size-11 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-									<Sparkles className="size-5" />
-								</div>
-								<div class="text-base font-semibold">The agent needs your approval</div>
-								<div class="mt-2 text-sm leading-6 text-slate-600">
-									{approvalEntry.description || approvalEntry.action || 'The agent wants to submit this form.'}
-								</div>
-								<div class="mt-5 flex flex-wrap justify-center gap-2">
-									<button
-										type="button"
-										class="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-95"
-										on:click={approveAgentAction}
-									>
-										Approve
-									</button>
-									<button
-										type="button"
-										class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 active:scale-95"
-										on:click={rejectAgentAction}
-									>
-										Reject
-									</button>
-									{#if showAgentControls}
-										<button
-											type="button"
-											class="rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-800 transition hover:bg-teal-100 active:scale-95"
-											on:click={takeOver}
-										>
-											Take Over
-										</button>
-									{/if}
-								</div>
-							</div>
-						</div>
+						<BrowserApprovalPrompt
+							{approvalEntry}
+							{showAgentControls}
+							onApprove={approveAgentAction}
+							onReject={rejectAgentAction}
+							onTakeOver={takeOver}
+						/>
 					{/if}
 
 					{#if isWorking}
@@ -450,18 +338,8 @@
 							title="Live browser"
 							sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
 							allow="clipboard-read; clipboard-write; fullscreen"
-							on:load={() => {
-								browserLoaded = true;
-								browserFailed = false;
-								if (loadFallbackTimer) {
-									clearTimeout(loadFallbackTimer);
-									loadFallbackTimer = null;
-								}
-							}}
-							on:error={() => {
-								browserLoaded = false;
-								browserFailed = true;
-							}}
+							on:load={handleBrowserLoad}
+							on:error={handleBrowserError}
 						/>
 					{/key}
 
