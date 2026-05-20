@@ -17,9 +17,9 @@ test('agent workspace component exposes browser, steps, and terminal tabs', () =
 	const browserShellSource = existsSync(browserShellPath) ? readFileSync(browserShellPath, 'utf8') : '';
 
 	assert.match(source, /type WorkspaceTab = 'browser' \| 'steps' \| 'terminal'/);
-	assert.match(source, /label: 'Browser'/);
-	assert.match(source, /label: 'Steps'/);
-	assert.match(source, /label: 'Terminal'/);
+	assert.match(source, /labelKey: 'Agent workspace tab browser'/);
+	assert.match(source, /labelKey: 'Agent workspace tab steps'/);
+	assert.match(source, /labelKey: 'Agent workspace tab terminal'/);
 	assert.match(browserShellSource, /requestFullscreen/);
 	assert.match(browserShellSource, /reloadBrowser/);
 });
@@ -91,8 +91,10 @@ test('agent browser shell controls call real workspace callbacks when provided',
 	assert.match(workspaceSource, /onPause={onPause}/);
 	assert.match(workspaceSource, /onTakeOver={onTakeOver}/);
 	assert.match(workspaceSource, /onResume={onResume}/);
-	assert.match(chatSource, /onPause={async \(\) => stopResponse\(false\)}/);
-	assert.match(chatSource, /onTakeOver={async \(\) => stopResponse\(false\)}/);
+	assert.match(chatSource, /onPause={async \(\) => {/);
+	assert.match(chatSource, /agentControlMode = 'paused'/);
+	assert.match(chatSource, /onTakeOver={async \(\) => {/);
+	assert.match(chatSource, /agentControlMode = 'user'/);
 });
 
 test('shared chat endpoint allows public shares without requiring a login first', () => {
@@ -121,11 +123,11 @@ test('agent browser shell shows live status, approval, and action feed affordanc
 	assert.match(source, /agent-command-center/);
 	assert.match(source, /agent-handoff-dock/);
 	assert.match(source, /agent-thinking-waves/);
-	assert.match(source, /approval-scrim/);
+	assert.match(source, /BrowserApprovalPrompt/);
 	assert.match(source, /controlModeClass/);
 	assert.match(source, /screenshot-glow/);
-	assert.match(source, /Connecting/);
-	assert.match(source, /Disconnected/);
+	assert.match(source, /getStatusOverlayLabel/);
+	assert.match(source, /from '\$lib\/utils\/agentBrowser'/);
 });
 
 test('desktop agent workspace is not hidden behind container-query-only classes', () => {
@@ -145,13 +147,22 @@ test('desktop agent workspace opens wide and remembers local resize', () => {
 	assert.match(source, /pane\.resize\(DESKTOP_DEFAULT_SIZE\)/);
 });
 
-test('browser artifact URL defaults to local scaling and reconnection', () => {
+test('browser artifact URL has no hardcoded credentials in frontend source', () => {
 	const source = readFileSync(browserArtifactsPath, 'utf8');
 
 	assert.match(source, /resize=scale/);
 	assert.match(source, /reconnect=1/);
 	assert.match(source, /reconnect_delay=1000/);
-	assert.doesNotMatch(source, /resize=remote/);
+	assert.doesNotMatch(source, /password=/);
+	assert.match(source, /resolveBrowserArtifactUrl/);
+});
+
+test('browser artifact URL is loaded from the backend API', () => {
+	const apiPath = resolve(process.cwd(), 'src/lib/apis/browser/index.ts');
+	const source = readFileSync(apiPath, 'utf8');
+
+	assert.match(source, /\/browser\/artifact-url/);
+	assert.match(source, /getBrowserArtifactUrlFromBackend/);
 });
 
 test('chat mounts the dockable agent workspace and uses the shared browser URL helper', () => {
@@ -159,7 +170,7 @@ test('chat mounts the dockable agent workspace and uses the shared browser URL h
 	const workspaceSource = readFileSync(workspacePath, 'utf8');
 
 	assert.match(source, /import AgentWorkspace from '\.\/AgentWorkspace\.svelte';/);
-	assert.match(source, /getDefaultBrowserArtifactUrl/);
+	assert.match(source, /workspaceBrowserUrl/);
 	assert.match(source, /agentWorkspaceOpen/);
 	assert.match(source, /<AgentWorkspace/);
 	assert.match(source, /chatId={\$chatId}/);
@@ -171,7 +182,7 @@ test('browser agent opens the workspace without auto-inserting the old inline ar
 	const source = readFileSync(chatPath, 'utf8');
 
 	assert.match(source, /const showBrowserArtifactHandler = async \(\) => {/);
-	assert.match(source, /if \(browserAgentEnabled\(\)\)/);
+	assert.match(source, /if \(isBrowserAgentEnabled\(\)\)/);
 	assert.doesNotMatch(source, /await appendBrowserArtifactMessage\(userMessageId\);/);
 });
 

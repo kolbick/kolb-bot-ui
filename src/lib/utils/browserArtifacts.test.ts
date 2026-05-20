@@ -3,8 +3,10 @@ import { describe, it } from 'node:test';
 
 import {
 	createBrowserArtifactFile,
+	DEFAULT_BROWSER_ARTIFACT_PATH,
 	getBrowserArtifacts,
 	getDefaultBrowserArtifactUrl,
+	getBrowserUrlFromHistory,
 	isBrowserArtifact
 } from './browserArtifacts.ts';
 
@@ -26,11 +28,9 @@ describe('browser artifact files', () => {
 		assert.deepEqual(artifacts, [{ type: 'browser', url: '/browser/vnc.html' }]);
 	});
 
-	it('uses the routed noVNC viewer by default', () => {
-		assert.equal(
-			getDefaultBrowserArtifactUrl(),
-			'/browser/vnc.html?autoconnect=1&resize=scale&reconnect=1&reconnect_delay=1000&path=browser/websockify#password=zL6qUhJBCVoqS9w44Goo3qjW'
-		);
+	it('uses the public noVNC path by default without credentials', () => {
+		assert.equal(getDefaultBrowserArtifactUrl(), DEFAULT_BROWSER_ARTIFACT_PATH);
+		assert.doesNotMatch(DEFAULT_BROWSER_ARTIFACT_PATH, /password=/);
 	});
 
 	it('creates the browser artifact file used by the chat button', () => {
@@ -38,7 +38,20 @@ describe('browser artifact files', () => {
 			type: 'browser',
 			name: 'Live browser',
 			title: 'Live browser',
-			url: '/browser/vnc.html?autoconnect=1&resize=scale&reconnect=1&reconnect_delay=1000&path=browser/websockify#password=zL6qUhJBCVoqS9w44Goo3qjW'
+			url: DEFAULT_BROWSER_ARTIFACT_PATH
 		});
+	});
+
+	it('prefers a session-specific browser URL from chat history', () => {
+		const sessionUrl = '/browser/vnc.html?autoconnect=1&session=abc';
+		const fromHistory = getBrowserUrlFromHistory({
+			messages: {
+				m1: {
+					files: [{ type: 'browser', url: sessionUrl }]
+				}
+			}
+		});
+
+		assert.equal(fromHistory, sessionUrl);
 	});
 });

@@ -6,7 +6,7 @@
 
 ## Features of this Fork
 - **Custom Branding**: Fully rebranded user interface, including customized logos, app names, and PWA manifests pointing to "Kolb-Bot".
-- **Independent Versioning**: Maintains its own release versioning (currently v0.9.2).
+- **Independent Versioning**: Maintains its own release versioning (currently v0.9.5).
 - **Core Open WebUI Features**: Inherits all the powerful features of Open WebUI, including multi-model conversations, RAG, Web Browsing, Voice/Video Call integrations, and granular permissions.
 
 ## Quick Start (Development)
@@ -44,5 +44,18 @@ docker compose up -d --build
 
 ---
 
+## Agent browser configuration
+
+Set noVNC credentials on the server (never in frontend source):
+
+```bash
+export BROWSER_VNC_PASSWORD="your-vnc-password"
+# optional: export BROWSER_ARTIFACT_VNC_PATH="/browser/vnc.html?autoconnect=1&resize=scale&..."
+```
+
+Authenticated clients load the full URL from `GET /api/v1/browser/artifact-url`.
+
 ## Origin / Upstream
 *This project is a fork of the amazing [Open WebUI](https://github.com/open-webui/open-webui) project. Please consult the [official documentation](https://docs.openwebui.com/) for detailed usage of the underlying platform.*
+
+See [docs/FORK.md](docs/FORK.md) and [docs/SHARED_CHATS.md](docs/SHARED_CHATS.md) for fork maintenance and shared-chat behavior.

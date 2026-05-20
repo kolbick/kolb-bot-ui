@@ -67,10 +67,17 @@
 	} from '$lib/utils';
 	import { AudioQueue } from '$lib/utils/audio';
 	import {
-		createBrowserArtifactFile,
 		getBrowserArtifacts,
-		getDefaultBrowserArtifactUrl
+		DEFAULT_BROWSER_ARTIFACT_PATH,
+		resolveBrowserArtifactUrl
 	} from '$lib/utils/browserArtifacts';
+	import {
+		browserAgentEnabled,
+		buildActiveSystemPrompt,
+		createBrowserArtifactMessage,
+		resolveWorkspaceBrowserUrl,
+		type AgentControlMode
+	} from '$lib/chat/browserAgent';
 
 	import {
 		archiveChatById,
@@ -157,10 +164,9 @@
 	let selectedToolIds = [];
 	let selectedFilterIds = [];
 	let pendingOAuthTools = [];
-	const BROWSER_AGENT_TOOL_ID = 'server:mcp:playwright-browser-automation';
-	const BROWSER_AGENT_SYSTEM_PROMPT =
-		'Agent mode is enabled. You have access to a visible Playwright browser. Use the browser tools for web navigation, inspection, form filling, and multi-step browser work. Explain what you are doing as you work, ask before sensitive actions, and keep the live browser state useful for the user to watch or take over.';
 	let agentWorkspaceOpen = false;
+	let agentBrowserUrl = DEFAULT_BROWSER_ARTIFACT_PATH;
+	let agentControlMode: AgentControlMode = 'agent';
 
 	let imageGenerationEnabled = false;
 	let webSearchEnabled = false;
@@ -188,35 +194,41 @@
 	$: activeStatusEntries =
 		activeMessage?.statusHistory ?? [...(activeMessage?.status ? [activeMessage.status] : [])];
 
-	const browserAgentEnabled = () => selectedToolIds.includes(BROWSER_AGENT_TOOL_ID);
+	const isBrowserAgentEnabled = () => browserAgentEnabled(selectedToolIds);
 	const openAgentWorkspace = () => {
-		if (browserAgentEnabled()) {
+		if (isBrowserAgentEnabled()) {
 			agentWorkspaceOpen = true;
 		}
 	};
-	const hasBrowserArtifactMessage = () =>
-		Object.values(history?.messages ?? {}).some(
-			(message: any) => getBrowserArtifacts(message?.files ?? []).length > 0
-		);
+
+	const refreshAgentBrowserUrl = async () => {
+		const token = localStorage.token;
+		if (!token) {
+			agentBrowserUrl = DEFAULT_BROWSER_ARTIFACT_PATH;
+			return;
+		}
+
+		agentBrowserUrl = await resolveBrowserArtifactUrl(token, $chatId);
+	};
+
+	$: workspaceBrowserUrl = resolveWorkspaceBrowserUrl(history, agentBrowserUrl);
+
+	$: if (isBrowserAgentEnabled()) {
+		refreshAgentBrowserUrl();
+	}
 
 	const appendBrowserArtifactMessage = async (parentId = history?.currentId ?? null) => {
 		const messageId = uuidv4();
 		const modelId = atSelectedModel?.id ?? selectedModels?.at(0) ?? '';
 		const model = $models.find((m) => m.id === modelId);
 
-		const browserMessage = {
+		const browserMessage = createBrowserArtifactMessage({
 			id: messageId,
 			parentId,
-			childrenIds: [],
-			role: 'assistant',
-			content: '',
-			files: [createBrowserArtifactFile()],
-			done: true,
-			model: model?.id ?? modelId,
+			modelId: model?.id ?? modelId,
 			modelName: model?.name ?? model?.id ?? 'Browser',
-			modelIdx: 0,
-			timestamp: Math.floor(Date.now() / 1000)
-		};
+			artifactUrl: agentBrowserUrl
+		});
 
 		if (parentId && history.messages[parentId]) {
 			history.messages[parentId].childrenIds.push(messageId);
@@ -1786,7 +1798,7 @@
 	const showBrowserArtifactHandler = async () => {
 		agentWorkspaceOpen = true;
 
-		if (browserAgentEnabled()) {
+		if (isBrowserAgentEnabled()) {
 			await tick();
 			return;
 		}
@@ -2018,6 +2030,7 @@
 
 		history.currentId = userMessageId;
 
+		agentControlMode = 'agent';
 		openAgentWorkspace();
 
 		// focus on chat input (skip during voice call to avoid triggering mobile keyboard)
@@ -2374,7 +2387,7 @@
 		// Always include system prompt — backend extracts it and prepends to DB messages.
 		// Only temp chats need conversation messages (persisted chats load from DB).
 		const baseSystemPrompt = params?.system ?? $settings?.system ?? '';
-		const activeSystemPrompt = [baseSystemPrompt, browserAgentEnabled() ? BROWSER_AGENT_SYSTEM_PROMPT : '']
+		const activeSystemPrompt = buildActiveSystemPrompt(baseSystemPrompt, selectedToolIds)
 			.filter((part) => part?.trim())
 			.join('\n\n');
 		let messages = [
@@ -3174,7 +3187,7 @@
 							</div>
 
 							<div class=" pb-2 {dragged ? 'z-0' : 'z-10'}">
-								{#if browserAgentEnabled() && !agentWorkspaceOpen}
+								{#if isBrowserAgentEnabled() && !agentWorkspaceOpen}
 									<div class="mx-auto mb-2 flex w-full max-w-3xl px-2">
 										<button
 											type="button"
@@ -3311,17 +3324,28 @@
 				</Pane>
 
 				<AgentWorkspace
-					open={agentWorkspaceOpen && browserAgentEnabled()}
+					open={agentWorkspaceOpen && isBrowserAgentEnabled()}
 					mobile={$mobile}
-					browserUrl={getDefaultBrowserArtifactUrl()}
+					browserUrl={workspaceBrowserUrl}
+					controlMode={agentControlMode}
 					statusEntries={activeStatusEntries}
 					terminalId={$selectedTerminalId}
 					chatId={$chatId}
 					onClose={() => (agentWorkspaceOpen = false)}
-					onPause={async () => stopResponse(false)}
-					onTakeOver={async () => stopResponse(false)}
+					onPause={async () => {
+						agentControlMode = 'paused';
+						await stopResponse(false);
+					}}
+					onTakeOver={async () => {
+						agentControlMode = 'user';
+						await stopResponse(false);
+					}}
 					onResume={async () => {
+						agentControlMode = 'agent';
 						agentWorkspaceOpen = true;
+						if (!generating && $chatId) {
+							await processNextInQueue($chatId);
+						}
 					}}
 				/>
 
