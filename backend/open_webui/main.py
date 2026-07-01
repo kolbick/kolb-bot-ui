@@ -259,26 +259,16 @@ log = logging.getLogger(__name__)
 
 
 class SPAStaticFiles(StaticFiles):
-    @staticmethod
-    def _disable_shell_cache(response):
-        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-        return response
-
     async def get_response(self, path: str, scope):
         try:
-            response = await super().get_response(path, scope)
-            if path in ('', '.', 'index.html'):
-                return self._disable_shell_cache(response)
-            return response
+            return await super().get_response(path, scope)
         except (HTTPException, StarletteHTTPException) as ex:
             if ex.status_code == 404:
                 if path.endswith('.js'):
                     # Return 404 for javascript files
                     raise ex
                 else:
-                    return self._disable_shell_cache(await super().get_response('index.html', scope))
+                    return await super().get_response('index.html', scope)
             else:
                 raise ex
 
