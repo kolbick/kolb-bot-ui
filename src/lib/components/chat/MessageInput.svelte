@@ -89,7 +89,6 @@
 	import InputVariablesModal from './MessageInput/InputVariablesModal.svelte';
 	import Voice from '../icons/Voice.svelte';
 	import Terminal from '../icons/Terminal.svelte';
-	import Computer from '../icons/Computer.svelte';
 	import IntegrationsMenu from './MessageInput/IntegrationsMenu.svelte';
 	import TerminalMenu from './MessageInput/TerminalMenu.svelte';
 	import Component from '../icons/Component.svelte';
@@ -1815,19 +1814,6 @@
 										{/if}
 
 										<div class="ml-1 flex gap-1.5 shrink-0">
-											<Tooltip content={$i18n.t('Show browser')} placement="top">
-												<button
-													id="show-browser-artifact-button"
-													type="button"
-													class="bg-transparent hover:bg-gray-100 text-gray-700 dark:text-white dark:hover:bg-gray-800 rounded-full size-8 flex justify-center items-center outline-hidden focus:outline-hidden"
-													on:click={() => {
-														dispatch('showBrowserArtifact');
-													}}
-												>
-													<Computer className="size-4.5" strokeWidth="1.5" />
-												</button>
-											</Tooltip>
-
 											{#if (selectedToolIds ?? []).length > 0}
 												<Tooltip
 													content={$i18n.t('{{COUNT}} Available Tools', {

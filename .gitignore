@@ -310,5 +310,4 @@ dist
 cypress/videos
 cypress/screenshots
 .vscode/settings.json
-.superpowers/
 .cptr

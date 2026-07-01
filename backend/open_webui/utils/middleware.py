@@ -11,7 +11,6 @@ import re
 import sys
 import textwrap
 import time
-import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Optional
 from uuid import uuid4
@@ -1962,91 +1961,6 @@ async def convert_url_images_to_base64(form_data, user=None):
     return form_data
 
 
-def is_minimax_backed_model(form_data: dict, model: dict) -> bool:
-    info = model.get('info', {}) if isinstance(model, dict) else {}
-    candidates = [
-        form_data.get('model'),
-        model.get('id') if isinstance(model, dict) else None,
-        model.get('name') if isinstance(model, dict) else None,
-        info.get('id') if isinstance(info, dict) else None,
-        info.get('name') if isinstance(info, dict) else None,
-        info.get('base_model_id') if isinstance(info, dict) else None,
-    ]
-    return any('minimax' in str(candidate).lower() for candidate in candidates if candidate)
-
-
-async def call_minimax_image_understanding(prompt: str, image_source: str) -> str:
-    endpoint = os.getenv('MINIMAX_IMAGE_TOOL_URL', 'http://minimax-image-mcpo:8000/understand_image')
-    payload = json.dumps(
-        {
-            'prompt': prompt or 'Describe this image clearly and include any visible text.',
-            'image_source': image_source,
-        }
-    ).encode()
-
-    def post_image_understanding():
-        request = urllib.request.Request(
-            endpoint,
-            data=payload,
-            headers={'Content-Type': 'application/json'},
-            method='POST',
-        )
-        with urllib.request.urlopen(request, timeout=90) as response:
-            raw = response.read().decode()
-            try:
-                parsed = json.loads(raw)
-                return parsed if isinstance(parsed, str) else json.dumps(parsed, ensure_ascii=False)
-            except Exception:
-                return raw
-
-    return await asyncio.to_thread(post_image_understanding)
-
-
-async def convert_minimax_images_to_text(form_data: dict, model: dict) -> dict:
-    if not is_minimax_backed_model(form_data, model):
-        return form_data
-
-    for message in form_data.get('messages', []):
-        content = message.get('content')
-        if message.get('role') != 'user' or not isinstance(content, list):
-            continue
-
-        text_prompt = '\n'.join(
-            item.get('text', '') for item in content if isinstance(item, dict) and item.get('type') == 'text'
-        ).strip()
-        new_content = []
-
-        for item in content:
-            if not isinstance(item, dict) or item.get('type') != 'image_url':
-                new_content.append(item)
-                continue
-
-            image_source = item.get('image_url', {}).get('url', '')
-            if not image_source:
-                continue
-
-            try:
-                description = await call_minimax_image_understanding(text_prompt, image_source)
-            except Exception as e:
-                log.warning(f'MiniMax image understanding failed: {e}')
-                description = 'Image understanding failed before the MiniMax model received the message.'
-
-            new_content.append(
-                {
-                    'type': 'text',
-                    'text': (
-                        '\n\n[MiniMax image understanding result]\n'
-                        f'{description}\n'
-                        '[/MiniMax image understanding result]'
-                    ),
-                }
-            )
-
-        message['content'] = new_content
-
-    return form_data
-
-
 async def load_messages_from_db(chat_id: str, message_id: str) -> Optional[list[dict]]:
     """
     Load the message chain from DB up to message_id,
@@ -2391,7 +2305,6 @@ async def process_chat_payload(request, form_data, user, metadata, model):
             pass
 
     form_data = await convert_url_images_to_base64(form_data, user=user)
-    form_data = await convert_minimax_images_to_text(form_data, model)
 
     event_emitter = await get_event_emitter(metadata)
     event_caller = await get_event_call(metadata)

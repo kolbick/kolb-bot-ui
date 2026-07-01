@@ -246,9 +246,6 @@
 						{onChange}
 						{onUpload}
 						{onWebSearchToggle}
-						on:showBrowserArtifact={() => {
-							dispatch('showBrowserArtifact');
-						}}
 						on:submit={(e) => {
 							dispatch('submit', e.detail);
 						}}
