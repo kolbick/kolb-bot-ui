@@ -4,8 +4,8 @@
   "description": "Kolb-Bot - AI Chat Interface",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#343541",
-  "theme_color": "#171717",
+  "background_color": "#12001f",
+  "theme_color": "#12001f",
   "icons": [
     {
       "src": "/icon-192.png",

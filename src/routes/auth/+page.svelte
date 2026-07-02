@@ -259,6 +259,13 @@
 				{:else}
 					<div class="my-auto flex flex-col justify-center items-center">
 						<div id="auth-login-card" class="auth-panel sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
+							<div class="flex justify-center mb-4">
+								<img
+									src="/logo-128.png"
+									class="size-24 drop-shadow-[0_2px_14px_rgba(232,198,107,0.4)]"
+									alt="{$WEBUI_NAME} mascot"
+								/>
+							</div>
 							{#if $config?.metadata?.auth_logo_position === 'center'}
 								<div class="flex justify-center mb-6">
 									<img
@@ -307,8 +314,7 @@
 												<label
 													for="name"
 													class="text-sm font-medium text-left mb-1 block text-amber-100"
-												>
-													>{$i18n.t('Name')}</label
+												>{$i18n.t('Name')}</label
 												>
 												<input
 													bind:value={name}
@@ -327,8 +333,7 @@
 												<label
 													for="username"
 													class="text-sm font-medium text-left mb-1 block text-amber-100"
-												>
-													>{$i18n.t('Username')}</label
+												>{$i18n.t('Username')}</label
 												>
 												<input
 													bind:value={ldapUsername}
@@ -346,8 +351,7 @@
 												<label
 													for="email"
 													class="text-sm font-medium text-left mb-1 block text-amber-100"
-												>
-													>{$i18n.t('Email')}</label
+												>{$i18n.t('Email')}</label
 												>
 												<input
 													bind:value={email}
@@ -366,8 +370,7 @@
 											<label
 												for="password"
 												class="text-sm font-medium text-left mb-1 block text-amber-100"
-											>
-												>{$i18n.t('Password')}</label
+											>{$i18n.t('Password')}</label
 											>
 											<SensitiveInput
 												bind:value={password}
@@ -690,6 +693,35 @@
 	.auth-button-secondary {
 		background: rgba(31, 18, 52, 0.45);
 		color: #f8fafc;
+	}
+
+	.auth-panel {
+		background: rgba(26, 18, 48, 0.7);
+		border: 1px solid rgba(232, 198, 107, 0.28);
+		border-radius: 1.25rem;
+		padding: 2rem 2.25rem;
+		backdrop-filter: blur(12px);
+		box-shadow:
+			0 0 0 1px rgba(124, 58, 237, 0.18),
+			0 28px 70px -22px rgba(0, 0, 0, 0.75),
+			inset 0 1px 0 rgba(232, 198, 107, 0.12);
+	}
+
+	.auth-title {
+		color: #e8c66b;
+		letter-spacing: 0.01em;
+	}
+
+	:global(.auth-input) {
+		border-bottom: 1px solid rgba(232, 198, 107, 0.28);
+		border-radius: 0;
+		padding-bottom: 0.35rem;
+		color: #f5f0ff;
+		transition: border-color 0.15s ease-out;
+	}
+
+	:global(.auth-input:focus) {
+		border-bottom-color: #e8c66b;
 	}
 
 	.auth-button-secondary:hover {

@@ -1,96 +1,275 @@
-/* ============================================================
-   Kolb-Bot Theme — AI Pirate / Purple & Gold
-   ============================================================ */
+/* ================================================================
+   KOLB-BOT — AI Pirate Assistant
+   Atmosphere: a captain's quarters at dusk. Candlelight on gold leaf,
+   weathered amethyst velvet, a 17th-century Oxford type-case. No slop.
+   ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
-/* ----------------------------------------------------------
-   CSS Variables
-   ---------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   1. Palette — burnished gold + bruised amethyst
+   ---------------------------------------------------------------- */
 :root {
-  --kb-gold: #c9980a;
-  --kb-gold-light: #e8b931;
-  --kb-gold-dim: #b8860b;
-  --kb-purple: #7c3aed;
-  --kb-purple-light: #a78bfa;
+  /* Gold accents */
+  --kb-gold:        #c9980a;
+  --kb-gold-warm:   #d4a51c;
+  --kb-gold-pale:   #e8c66b;
+  --kb-gold-deep:   #8b6508;
+  --kb-gold-glow:   rgba(232, 198, 107, 0.45);
+
+  /* Purple/amethyst */
+  --kb-plum:        #7c3aed;
+  --kb-plum-deep:   #4c1d95;
+  --kb-amethyst:    #a78bfa;
+
+  /* Pirate neutrals */
+  --kb-ink:         #1a1230;    /* ink / darkest purple-black */
+  --kb-velvet:      #241845;    /* rich dark purple velvet */
+  --kb-ember:       #8b2635;    /* danger / destructive crimson */
+  --kb-vellum:      #f6efdc;    /* warm aged paper (accent only) */
 }
 
-/* ----------------------------------------------------------
-   Dark mode — purple-tinted gray scale
-   ---------------------------------------------------------- */
+/* Dark mode — ship's cabin at midnight, lit by a brass lantern */
 .dark {
-  --color-gray-950: #0c0a17;
-  --color-gray-900: #100e1f;
-  --color-gray-850: #161330;
-  --color-gray-800: #1d1940;
-  --color-gray-700: #2b2558;
-  --color-gray-600: #4e4680;
-  --color-gray-500: #6e659a;
-  --color-gray-400: #9890b8;
-  --color-gray-300: #c0bad8;
-  --color-gray-200: #d8d3ed;
-  --color-gray-100: #ece8f8;
-  --color-gray-50:  #f5f3ff;
+  --color-gray-950: #07050f;
+  --color-gray-900: #0c0918;
+  --color-gray-850: #14102a;
+  --color-gray-800: #1c163d;
+  --color-gray-700: #2b2358;
+  --color-gray-600: #4d4180;
+  --color-gray-500: #7566a6;
+  --color-gray-400: #9c91c4;
+  --color-gray-300: #c6bee2;
+  --color-gray-200: #ddd6ef;
+  --color-gray-100: #ece6fa;
+  --color-gray-50:  #f5f0ff;
 }
 
-/* ----------------------------------------------------------
-   Light mode — lavender/purple aesthetic
-   ---------------------------------------------------------- */
+/* Light mode — dawn watch, very light lavender parchment */
 .light,
 :root:not(.dark) {
-  --color-gray-950: #1e1a3e;
-  --color-gray-900: #2d2558;
-  --color-gray-850: #3b3470;
-  --color-gray-800: #4e4680;
-  --color-gray-700: #6b5fa8;
-  --color-gray-600: #8b82b5;
-  --color-gray-500: #a89fd8;
-  --color-gray-400: #bdb6e4;
-  --color-gray-300: #d4cef5;
-  --color-gray-200: #e4dcff;
-  --color-gray-100: #ede8ff;
-  --color-gray-50:  #f5f2ff;
+  --color-gray-950: #1e1440;
+  --color-gray-900: #2a1d5a;
+  --color-gray-850: #3a2a78;
+  --color-gray-800: #4b3a8f;
+  --color-gray-700: #6149b0;
+  --color-gray-600: #6f5cb3;
+  --color-gray-500: #8d7cc7;
+  --color-gray-400: #bdb0e8;
+  --color-gray-300: #d4caf5;
+  --color-gray-200: #e3dafc;
+  --color-gray-100: #ede4ff;
+  --color-gray-50:  #f5eeff;
 }
 
-/* ----------------------------------------------------------
-   Scrollbars — purple track, gold on hover
-   ---------------------------------------------------------- */
-.dark ::-webkit-scrollbar { width: 5px; height: 5px; }
-.dark ::-webkit-scrollbar-track { background: #100e1f; }
-.dark ::-webkit-scrollbar-thumb { background: #3b3470; border-radius: 4px; }
-.dark ::-webkit-scrollbar-thumb:hover { background: #c9980a; }
+/* ----------------------------------------------------------------
+   2. Typography — IM Fell English (display) + EB Garamond (body)
+   ----------------------------------------------------------------
+   Applied globally so the whole interface reads as a ship's log,
+   not an SaaS dashboard. EB Garamond at slightly larger size so the
+   classical serif doesn't feel cramped.                           */
+
+html, body {
+  font-family: 'EB Garamond', 'Garamond', 'Georgia', serif !important;
+  font-feature-settings: "liga" 1, "dlig" 1, "onum" 1, "hist" 1;
+  font-size: 16px;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+body, p, span, div, li, td, th, label,
+button, input, select, textarea, a {
+  font-family: 'EB Garamond', 'Garamond', 'Georgia', serif !important;
+  letter-spacing: 0.005em;
+}
+
+/* Display font: brand plaques, headings, modal titles, menus */
+h1, h2, h3,
+[class*="font-primary"],
+[data-title],
+.modal-title,
+dialog h1, dialog h2,
+[role="dialog"] h1, [role="dialog"] h2,
+[role="dialog"] h3 {
+  font-family: 'IM Fell English', 'EB Garamond', Georgia, serif !important;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+}
+
+/* Brand name specifically — small caps, like a ship's plaque */
+.sidebar [class*="font-primary"],
+header [class*="font-primary"] {
+  font-family: 'IM Fell English SC', 'IM Fell English', Georgia, serif !important;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+/* Keep code blocks in mono for legibility */
+pre, code, kbd, samp, tt,
+pre *, code * {
+  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code',
+               'Consolas', monospace !important;
+  letter-spacing: 0 !important;
+}
+
+/* ----------------------------------------------------------------
+   3. Text-color sweep — nothing leaks to pure black/white
+   ----------------------------------------------------------------
+   The base theme has hardcoded text-gray-900 / text-black classes
+   on many elements; push them toward our purple-tinted neutrals so
+   no label reads as harsh ink against our amethyst surfaces.      */
+
+.dark .text-black,
+.dark [class*="dark:text-black"],
+.dark .text-gray-900,
+.dark [class*="dark:text-gray-900"] {
+  color: var(--color-gray-100) !important;
+}
+.dark .text-gray-800,
+.dark [class*="dark:text-gray-800"] {
+  color: var(--color-gray-200) !important;
+}
+.dark .text-gray-700,
+.dark [class*="dark:text-gray-700"] {
+  color: var(--color-gray-300) !important;
+}
+.dark .text-gray-600 { color: var(--color-gray-400) !important; }
+.dark .text-gray-500 { color: var(--color-gray-500) !important; }
+.dark .text-white    { color: #f7f3ff !important; }
+
+.light .text-black,
+:root:not(.dark) .text-black {
+  color: var(--color-gray-950) !important;
+}
+.light .text-gray-900,
+:root:not(.dark) .text-gray-900 {
+  color: var(--color-gray-900) !important;
+}
+.light .text-gray-800,
+:root:not(.dark) .text-gray-800 {
+  color: var(--color-gray-800) !important;
+}
+.light .text-gray-700,
+:root:not(.dark) .text-gray-700 {
+  color: var(--color-gray-700) !important;
+}
+.light .text-gray-600,
+:root:not(.dark) .text-gray-600 {
+  color: var(--color-gray-600) !important;
+}
+
+/* Active / selected tab lights up in gold (dark) or plum (light) */
+.dark button[aria-selected="true"],
+.dark [role="tab"][aria-selected="true"],
+.dark .active {
+  color: var(--kb-gold-warm) !important;
+}
+.light button[aria-selected="true"],
+.light [role="tab"][aria-selected="true"],
+:root:not(.dark) button[aria-selected="true"] {
+  color: var(--kb-plum-deep) !important;
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------
+   4. Body background — candlelit ambient, no generic gradient
+   ---------------------------------------------------------------- */
+.dark body {
+  background:
+    radial-gradient(ellipse 55% 40% at 72% 8%, rgba(201, 152, 10, 0.10), transparent 60%),
+    radial-gradient(ellipse 40% 45% at 12% 92%, rgba(124, 58, 237, 0.09), transparent 65%),
+    linear-gradient(180deg, #0a0815 0%, #060410 100%) !important;
+  background-attachment: fixed !important;
+}
+
+.light body,
+:root:not(.dark) body {
+  background:
+    radial-gradient(ellipse 60% 45% at 85% 5%, rgba(124, 58, 237, 0.09), transparent 58%),
+    radial-gradient(ellipse 45% 40% at 5% 95%, rgba(201, 152, 10, 0.06), transparent 62%),
+    #f5eeff !important;
+  background-attachment: fixed !important;
+}
+
+/* Subtle paper grain — barely visible, just enough to kill flatness */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+}
+.light body::before,
+:root:not(.dark) body::before {
+  background-image:
+    radial-gradient(rgba(36, 24, 69, 0.035) 1px, transparent 1px);
+  mix-blend-mode: multiply;
+}
+
+/* ----------------------------------------------------------------
+   5. Scrollbars — brass on velvet
+   ---------------------------------------------------------------- */
+.dark ::-webkit-scrollbar        { width: 6px; height: 6px; }
+.dark ::-webkit-scrollbar-track  { background: transparent; }
+.dark ::-webkit-scrollbar-thumb  {
+  background: linear-gradient(180deg, #3a2f6e, #2b2358);
+  border-radius: 8px;
+  border: 1px solid rgba(201, 152, 10, 0.08);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--kb-gold), var(--kb-gold-deep));
+}
 
 .light ::-webkit-scrollbar,
-:root:not(.dark) ::-webkit-scrollbar { width: 5px; height: 5px; }
+:root:not(.dark) ::-webkit-scrollbar        { width: 6px; height: 6px; }
 .light ::-webkit-scrollbar-track,
-:root:not(.dark) ::-webkit-scrollbar-track { background: #ede8ff; }
+:root:not(.dark) ::-webkit-scrollbar-track  { background: transparent; }
 .light ::-webkit-scrollbar-thumb,
-:root:not(.dark) ::-webkit-scrollbar-thumb { background: #c8c0f0; border-radius: 4px; }
+:root:not(.dark) ::-webkit-scrollbar-thumb  {
+  background: linear-gradient(180deg, #cfc1f0, #b5a4e3);
+  border-radius: 8px;
+}
 .light ::-webkit-scrollbar-thumb:hover,
-:root:not(.dark) ::-webkit-scrollbar-thumb:hover { background: #c9980a; }
+:root:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--kb-gold-warm), var(--kb-gold-deep));
+}
 
-/* ----------------------------------------------------------
-   Sidebar — deeper purple with gold accent stripe
-   ---------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   6. Sidebar — dark velvet panel with gold filigree top edge
+   ---------------------------------------------------------------- */
 .dark #sidebar,
 .dark aside {
-  border-right: 1px solid #2b2558 !important;
-  background: linear-gradient(180deg, #120f28 0%, #0c0a17 100%) !important;
+  background: linear-gradient(180deg, #120d28 0%, #080514 100%) !important;
+  border-right: 1px solid rgba(201, 152, 10, 0.08) !important;
+  box-shadow: inset -1px 0 0 rgba(124, 58, 237, 0.12);
 }
 .dark #sidebar::before,
 .dark aside::before {
   content: '';
   display: block;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #7c3aed, #c9980a, #7c3aed, transparent);
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--kb-plum) 25%,
+    var(--kb-gold) 50%,
+    var(--kb-plum) 75%,
+    transparent 100%
+  );
+  opacity: 0.7;
 }
 
 .light #sidebar,
 .light aside,
 :root:not(.dark) #sidebar,
 :root:not(.dark) aside {
-  background: linear-gradient(180deg, #ede8ff 0%, #e4dcff 100%) !important;
-  border-right: 1px solid #d4cef5 !important;
+  background: linear-gradient(180deg, #ede4ff 0%, #e0d3fc 100%) !important;
+  border-right: 1px solid rgba(97, 73, 176, 0.18) !important;
 }
 .light #sidebar::before,
 .light aside::before,
@@ -98,445 +277,466 @@
 :root:not(.dark) aside::before {
   content: '';
   display: block;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #7c3aed, #c9980a, #7c3aed, transparent);
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--kb-plum) 25%,
+    var(--kb-gold) 50%,
+    var(--kb-plum) 75%,
+    transparent 100%
+  );
+  opacity: 0.6;
 }
 
-/* ----------------------------------------------------------
-   Sidebar brand name — Cinzel font for Kolb-Bot header
-   ---------------------------------------------------------- */
-.dark .sidebar [class*="font-primary"],
-.light .sidebar [class*="font-primary"],
-:root:not(.dark) .sidebar [class*="font-primary"] {
-  font-family: 'Cinzel', 'Georgia', serif !important;
-  letter-spacing: 0.06em;
+/* ----------------------------------------------------------------
+   7. Sidebar logo — remove Tailwind's dark:invert, add candle-glow
+   ---------------------------------------------------------------- */
+.dark img[src*="splash"].dark\:invert,
+.dark img[src*="/static/splash"],
+nav img[src*="splash"] {
+  filter: drop-shadow(0 0 10px rgba(201, 152, 10, 0.45))
+          drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)) !important;
+  -webkit-filter: drop-shadow(0 0 10px rgba(201, 152, 10, 0.45))
+                  drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)) !important;
 }
 
-/* ----------------------------------------------------------
-   Active / selected sidebar chat items
-   ---------------------------------------------------------- */
+/* Square Kolb-Bot badge — always rounded, always with gold ring */
+nav img[src*="/static/favicon"],
+nav img[src*="favicon.png"] {
+  border-radius: 0.85rem !important;
+  box-shadow:
+    0 0 0 1.5px rgba(201, 152, 10, 0.45),
+    0 2px 10px rgba(201, 152, 10, 0.25),
+    0 0 18px rgba(124, 58, 237, 0.3) !important;
+}
+
+/* ----------------------------------------------------------------
+   8. Selected / active chat item — gold candle on velvet
+   ---------------------------------------------------------------- */
 .dark .selected,
 .dark [class*="selected"] {
-  background-color: rgba(124, 58, 237, 0.18) !important;
-  border-left: 2px solid #c9980a !important;
-  border-radius: 0 !important;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 152, 10, 0.14) 0%,
+    rgba(124, 58, 237, 0.10) 60%,
+    transparent 100%
+  ) !important;
+  border-left: 2px solid var(--kb-gold) !important;
+  border-radius: 0 6px 6px 0 !important;
+  box-shadow: inset 0 0 12px rgba(201, 152, 10, 0.08);
 }
+
 .light .selected,
 .light [class*="selected"],
 :root:not(.dark) .selected,
 :root:not(.dark) [class*="selected"] {
-  background-color: rgba(124, 58, 237, 0.12) !important;
-  border-left: 2px solid #c9980a !important;
-  border-radius: 0 !important;
+  background: linear-gradient(
+    90deg,
+    rgba(201, 152, 10, 0.10) 0%,
+    rgba(124, 58, 237, 0.12) 60%,
+    transparent 100%
+  ) !important;
+  border-left: 2px solid var(--kb-gold) !important;
+  border-radius: 0 6px 6px 0 !important;
 }
 
-/* ----------------------------------------------------------
-   Send button — gold in dark, purple in light
-   ---------------------------------------------------------- */
-.dark #send-message-button:not(:disabled) {
-  background-color: #b8860b !important;
-  color: #fff8e7 !important;
-}
-.dark #send-message-button:not(:disabled):hover {
-  background-color: #d4a017 !important;
-}
-
-.light #send-message-button:not(:disabled),
-:root:not(.dark) #send-message-button:not(:disabled) {
-  background-color: #7c3aed !important;
-  color: #fff !important;
-}
-.light #send-message-button:not(:disabled):hover,
-:root:not(.dark) #send-message-button:not(:disabled):hover {
-  background-color: #6d28d9 !important;
+/* ----------------------------------------------------------------
+   9. Nav / top bar
+   ---------------------------------------------------------------- */
+.dark #nav,
+.dark header,
+.dark nav:not(aside nav) {
+  border-bottom: 1px solid rgba(201, 152, 10, 0.10) !important;
+  backdrop-filter: blur(8px);
 }
 
-/* ----------------------------------------------------------
-   Chat input area
-   ---------------------------------------------------------- */
+.light #nav,
+.light header,
+:root:not(.dark) #nav,
+:root:not(.dark) header {
+  background-color: rgba(240, 232, 255, 0.82) !important;
+  border-bottom: 1px solid rgba(97, 73, 176, 0.18) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* ----------------------------------------------------------------
+   10. Chat input — brass-rimmed letter tray
+   ---------------------------------------------------------------- */
 .dark #chat-input,
 .dark [id*="chat-input"],
 .dark textarea {
-  background-color: #1d1940 !important;
-  border-color: #2b2558 !important;
-  color: #e8e0f0 !important;
+  background-color: rgba(14, 10, 32, 0.85) !important;
+  border: 1px solid rgba(124, 58, 237, 0.22) !important;
+  color: #ece6fa !important;
+  font-family: 'EB Garamond', Georgia, serif !important;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
 }
 .dark textarea:focus,
 .dark #chat-input:focus {
-  border-color: #7c3aed !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.25) !important;
+  outline: none !important;
+  border-color: rgba(201, 152, 10, 0.55) !important;
+  box-shadow:
+    0 0 0 1px rgba(201, 152, 10, 0.35),
+    0 0 22px -4px rgba(201, 152, 10, 0.35) !important;
 }
 
 .light #chat-input,
 .light textarea,
 :root:not(.dark) #chat-input,
 :root:not(.dark) textarea {
-  background-color: #ffffff !important;
-  border-color: #c8c0f0 !important;
+  background-color: #fdfaff !important;
+  border: 1px solid rgba(97, 73, 176, 0.28) !important;
+  color: var(--color-gray-900) !important;
+}
+.light textarea:focus,
+:root:not(.dark) textarea:focus {
+  border-color: var(--kb-plum) !important;
+  box-shadow:
+    0 0 0 1px rgba(124, 58, 237, 0.25),
+    0 0 20px -4px rgba(124, 58, 237, 0.25) !important;
 }
 
-/* ----------------------------------------------------------
-   Navigation bar
-   ---------------------------------------------------------- */
-.dark #nav,
-.dark header,
-.dark nav {
-  border-bottom: 1px solid #2b2558 !important;
-}
-
-.light #nav,
-.light header,
-.light nav,
-:root:not(.dark) #nav,
-:root:not(.dark) header,
-:root:not(.dark) nav {
-  background-color: #f0ebff !important;
-  border-bottom: 1px solid #d4cef5 !important;
-}
-
-/* ----------------------------------------------------------
-   Focused inputs
-   ---------------------------------------------------------- */
-.dark input:focus:not([type="checkbox"]):not([type="radio"]) {
-  outline: none !important;
-  border-color: #7c3aed !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
-}
-.light input:focus:not([type="checkbox"]):not([type="radio"]),
-:root:not(.dark) input:focus:not([type="checkbox"]):not([type="radio"]) {
-  outline: none !important;
-  border-color: #7c3aed !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15) !important;
-}
-
-/* ----------------------------------------------------------
-   Links
-   ---------------------------------------------------------- */
-.dark a:not([class*="button"]):not([class*="btn"]) { color: #c9980a; }
-.dark a:hover:not([class*="button"]):not([class*="btn"]) { color: #e8b931; }
-.light a:not([class*="button"]):not([class*="btn"]),
-:root:not(.dark) a:not([class*="button"]):not([class*="btn"]) { color: #7c3aed; }
-.light a:hover:not([class*="button"]):not([class*="btn"]),
-:root:not(.dark) a:hover:not([class*="button"]):not([class*="btn"]) { color: #6d28d9; }
-
-/* ----------------------------------------------------------
-   Text selection
-   ---------------------------------------------------------- */
-.dark ::selection { background: rgba(201, 152, 10, 0.3); color: #f5f3ff; }
-.light ::selection,
-:root:not(.dark) ::selection { background: rgba(124, 58, 237, 0.2); color: #1e1a3e; }
-
-/* ----------------------------------------------------------
-   Modals / dialogs
-   ---------------------------------------------------------- */
-.dark [class*="modal"],
-.dark [role="dialog"] {
-  border: 1px solid #2b2558 !important;
-}
-
-/* ----------------------------------------------------------
-   Code blocks
-   ---------------------------------------------------------- */
-.dark pre,
-.dark code {
-  background-color: #161330 !important;
-  border: 1px solid #2b2558 !important;
-}
-.light pre,
-.light code,
-:root:not(.dark) pre,
-:root:not(.dark) code {
-  background-color: #ede8ff !important;
-  border: 1px solid #d4cef5 !important;
-}
-
-/* ----------------------------------------------------------
-   Logo glow
-   ---------------------------------------------------------- */
-.dark img[src*="favicon"],
-.dark img[src*="splash"] {
-  filter: drop-shadow(0 0 6px rgba(201, 152, 10, 0.5));
-}
-.light img[src*="favicon"],
-.light img[src*="splash"],
-:root:not(.dark) img[src*="favicon"],
-:root:not(.dark) img[src*="splash"] {
-  filter: drop-shadow(0 0 5px rgba(124, 58, 237, 0.3));
-}
-
-/* ----------------------------------------------------------
-   Parchment text tint
-   ---------------------------------------------------------- */
-.dark body,
-.dark p,
-.dark span,
-.dark div {
-  --tw-prose-body: #e0d8f0;
-}
-
-/* ----------------------------------------------------------
-   Background crosshatch texture — barely visible
-   ---------------------------------------------------------- */
-.dark body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.025;
-  background-image:
-    repeating-linear-gradient(45deg, #a78bfa 0px, #a78bfa 1px, transparent 1px, transparent 8px),
-    repeating-linear-gradient(-45deg, #a78bfa 0px, #a78bfa 1px, transparent 1px, transparent 8px);
-}
-
-/* ----------------------------------------------------------
-   Splash / loading screen
-   ---------------------------------------------------------- */
-html.dark #splash-screen { background: #0c0a17 !important; }
-html:not(.dark) #splash-screen { background: #f5f2ff !important; }
-#progress-bar { background: linear-gradient(90deg, #7c3aed, #c9980a) !important; }
-
-/* ----------------------------------------------------------
-   Light mode backgrounds
-   ---------------------------------------------------------- */
-.light body,
-:root:not(.dark) body { background-color: #f5f2ff !important; }
-
-/* ==========================================================
-   KOLB-BOT DISTINCTIVE TREATMENTS
-   ========================================================== */
-
-/* Kill the Tailwind `dark:invert` that ruins the color pirate
-   logo in the mini-sidebar, and force square badge corners. */
-.dark img[src*="/static/splash.png"],
-.dark nav img[src*="splash"] {
-  filter: drop-shadow(0 0 8px rgba(201, 152, 10, 0.55)) !important;
-  mix-blend-mode: normal !important;
-  -webkit-filter: drop-shadow(0 0 8px rgba(201, 152, 10, 0.55)) !important;
-}
-img[src*="/static/splash.png"].invert,
-img[src*="/static/splash.png"].dark\:invert,
-.dark img[src*="/static/splash.png"] {
-  filter: drop-shadow(0 0 8px rgba(201, 152, 10, 0.45)) !important;
-}
-/* Un-invert everywhere — our logos are already designed for both modes */
-img[src*="/static/splash"].dark\:invert,
-img[src*="/static/favicon"].dark\:invert {
-  filter: drop-shadow(0 0 6px rgba(201, 152, 10, 0.4)) !important;
-}
-
-/* Force rounded-2xl on the sidebar chat favicon regardless of selection */
-nav img[src*="/static/favicon.png"] {
-  border-radius: 0.85rem !important;
-  box-shadow: 0 0 0 1.5px rgba(201, 152, 10, 0.35),
-              0 2px 10px rgba(124, 58, 237, 0.3) !important;
-}
-
-/* -----------------------------------------------------------
-   Cinzel display font on title-like elements
-   ----------------------------------------------------------- */
-h1, h2, .modal-title,
-[class*="page-title"],
-[data-title],
-title {
-  font-family: 'Cinzel', 'Georgia', serif !important;
-  letter-spacing: 0.04em;
-}
-
-/* Chat top bar app name / breadcrumb */
-header .font-primary,
-nav .font-primary,
-[class*="font-primary"] {
-  font-family: 'Cinzel', 'Georgia', serif !important;
+/* ----------------------------------------------------------------
+   11. Buttons — gold doubloon (dark) / plum wax seal (light)
+   ---------------------------------------------------------------- */
+.dark #send-message-button:not(:disabled),
+.dark button.bg-black,
+.dark button.bg-white,
+.dark button[class*="bg-gray-100"]:not([class*="hover"]) {
+  background: linear-gradient(
+    135deg,
+    #e8c66b 0%,
+    var(--kb-gold-warm) 45%,
+    var(--kb-gold) 70%,
+    var(--kb-gold-deep) 100%
+  ) !important;
+  color: #1a1230 !important;
+  border: 1px solid rgba(232, 198, 107, 0.45) !important;
+  font-family: 'IM Fell English', Georgia, serif !important;
   letter-spacing: 0.05em;
-  font-weight: 600;
+  text-shadow: 0 1px 0 rgba(255, 230, 150, 0.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 240, 180, 0.4),
+    inset 0 -1px 0 rgba(120, 80, 0, 0.25),
+    0 2px 8px rgba(201, 152, 10, 0.3) !important;
+  transition: transform 0.1s ease-out, box-shadow 0.18s ease-out;
+}
+.dark #send-message-button:not(:disabled):hover,
+.dark button.bg-black:hover,
+.dark button.bg-white:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 240, 180, 0.5),
+    inset 0 -1px 0 rgba(120, 80, 0, 0.25),
+    0 4px 14px rgba(232, 198, 107, 0.5) !important;
+  transform: translateY(-0.5px);
+}
+.dark #send-message-button:not(:disabled):active {
+  transform: translateY(0.5px);
 }
 
-/* -----------------------------------------------------------
-   Chat messages — distinctive Kolb-Bot treatment
-   -----------------------------------------------------------
-   Assistant bubble gets a subtle gold left rule + parchment
-   tint. User bubble gets a purple accent rule on the right. */
+.light #send-message-button:not(:disabled),
+.light button.bg-black,
+:root:not(.dark) #send-message-button:not(:disabled),
+:root:not(.dark) button.bg-black {
+  background: linear-gradient(
+    135deg,
+    #8b5cf6 0%,
+    var(--kb-plum) 50%,
+    var(--kb-plum-deep) 100%
+  ) !important;
+  color: #fff !important;
+  border: 1px solid rgba(167, 139, 250, 0.4) !important;
+  font-family: 'IM Fell English', Georgia, serif !important;
+  letter-spacing: 0.05em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 2px 10px rgba(124, 58, 237, 0.35) !important;
+}
+.light #send-message-button:not(:disabled):hover,
+:root:not(.dark) #send-message-button:not(:disabled):hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 4px 14px rgba(124, 58, 237, 0.5) !important;
+  transform: translateY(-0.5px);
+}
+
+/* ----------------------------------------------------------------
+   12. Chat messages — illuminated manuscript treatment
+   ----------------------------------------------------------------
+   Assistant block gets a gold-rule on the left and an illuminated
+   first-letter (Kolb-Bot speaks in a captain's voice).            */
+
 .dark [id^="message-"],
-.dark .chat-assistant,
-.dark .chat-user {
+.light [id^="message-"],
+:root:not(.dark) [id^="message-"] {
   position: relative;
 }
 
-/* Assistant messages (left-aligned, no role='user' ancestor) */
-.dark [id^="message-"]:not([class*="user"]) > div:first-child,
-.dark .chat-assistant > div:first-child {
-  border-left: 2px solid rgba(201, 152, 10, 0.45);
-  padding-left: 0.85rem;
+.dark [id^="message-"] .prose,
+.dark [id^="message-"] p {
+  font-family: 'EB Garamond', Georgia, serif !important;
+  font-size: 1.08rem;
+  line-height: 1.62;
+  color: var(--color-gray-100) !important;
+}
+.light [id^="message-"] .prose,
+.light [id^="message-"] p,
+:root:not(.dark) [id^="message-"] .prose,
+:root:not(.dark) [id^="message-"] p {
+  font-family: 'EB Garamond', Georgia, serif !important;
+  font-size: 1.08rem;
+  line-height: 1.62;
+  color: var(--color-gray-900) !important;
+}
+
+/* Illuminated first letter on long assistant messages */
+.dark [id^="message-"] .prose > p:first-of-type::first-letter,
+.light [id^="message-"] .prose > p:first-of-type::first-letter,
+:root:not(.dark) [id^="message-"] .prose > p:first-of-type::first-letter {
+  font-family: 'IM Fell English', Georgia, serif !important;
+  font-size: 2.4em;
+  line-height: 0.9;
+  padding: 0.12em 0.12em 0 0;
+  margin-right: 0.05em;
+  float: left;
+  color: var(--kb-gold);
+  text-shadow:
+    0 0 8px rgba(201, 152, 10, 0.4),
+    0 1px 0 rgba(0, 0, 0, 0.3);
+  font-weight: 400;
+}
+
+/* ----------------------------------------------------------------
+   13. Modals / dialogs — parchment card with gold corners
+   ---------------------------------------------------------------- */
+.dark [role="dialog"],
+.dark [class*="Modal"]  > div > div,
+.dark dialog {
   background: linear-gradient(
-    90deg,
-    rgba(124, 58, 237, 0.035) 0%,
-    rgba(12, 10, 23, 0) 60%
-  );
-  border-radius: 0 6px 6px 0;
+    180deg,
+    rgba(28, 22, 61, 0.96) 0%,
+    rgba(12, 9, 24, 0.98) 100%
+  ) !important;
+  border: 1px solid rgba(201, 152, 10, 0.22) !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 0 0 1px rgba(124, 58, 237, 0.12),
+    0 24px 60px -12px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(232, 198, 107, 0.08) !important;
+  backdrop-filter: blur(8px);
 }
 
-.light [id^="message-"]:not([class*="user"]) > div:first-child,
-.light .chat-assistant > div:first-child,
-:root:not(.dark) [id^="message-"]:not([class*="user"]) > div:first-child {
-  border-left: 2px solid rgba(201, 152, 10, 0.55);
-  padding-left: 0.85rem;
+.light [role="dialog"],
+.light [class*="Modal"]  > div > div,
+:root:not(.dark) [role="dialog"],
+:root:not(.dark) dialog {
   background: linear-gradient(
-    90deg,
-    rgba(124, 58, 237, 0.05) 0%,
-    rgba(245, 242, 255, 0) 60%
-  );
-  border-radius: 0 6px 6px 0;
-}
-
-/* -----------------------------------------------------------
-   Buttons — Kolb-Bot stamp treatment
-   ----------------------------------------------------------- */
-.dark button[type="submit"]:not(:disabled),
-.dark .btn-primary,
-.dark [class*="bg-black"]:hover {
-  transition: all 0.18s ease-out;
-}
-
-/* Primary call-to-action buttons */
-.dark button.bg-black,
-.dark button[class*="bg-gray-900"]:not([class*="hover"]) {
-  background: linear-gradient(135deg, #b8860b 0%, #c9980a 55%, #8b6508 100%) !important;
-  color: #fff8e7 !important;
-  border: 1px solid rgba(232, 185, 49, 0.3) !important;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+    180deg,
+    rgba(253, 250, 255, 0.97) 0%,
+    rgba(240, 232, 255, 0.97) 100%
+  ) !important;
+  border: 1px solid rgba(201, 152, 10, 0.28) !important;
+  border-radius: 10px !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 230, 150, 0.3),
-    0 2px 8px rgba(201, 152, 10, 0.25) !important;
-}
-.dark button.bg-black:hover {
-  background: linear-gradient(135deg, #d4a017 0%, #e8b931 55%, #b8860b 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 230, 150, 0.4),
-    0 4px 14px rgba(201, 152, 10, 0.45) !important;
+    0 0 0 1px rgba(124, 58, 237, 0.10),
+    0 22px 55px -14px rgba(42, 29, 90, 0.25) !important;
+  backdrop-filter: blur(6px);
 }
 
-.light button.bg-black,
-:root:not(.dark) button.bg-black {
-  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #6d28d9 100%) !important;
-  color: #fff !important;
-  border: 1px solid rgba(167, 139, 250, 0.3) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 2px 10px rgba(124, 58, 237, 0.35) !important;
+/* ----------------------------------------------------------------
+   14. Code blocks — inked passage in a ledger
+   ---------------------------------------------------------------- */
+.dark pre,
+.dark code {
+  background-color: rgba(8, 6, 18, 0.85) !important;
+  border: 1px solid rgba(201, 152, 10, 0.12) !important;
+  border-left: 2px solid rgba(201, 152, 10, 0.35) !important;
+  color: #e8c66b !important;
+}
+.dark pre code { color: #ece6fa !important; background: transparent !important; }
+
+.light pre,
+:root:not(.dark) pre {
+  background-color: #f0e8ff !important;
+  border: 1px solid rgba(97, 73, 176, 0.22) !important;
+  border-left: 2px solid var(--kb-plum) !important;
+}
+.light code,
+:root:not(.dark) code {
+  background-color: rgba(201, 152, 10, 0.08) !important;
+  border: 1px solid rgba(201, 152, 10, 0.2) !important;
+  color: var(--kb-gold-deep) !important;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
 }
 
-/* -----------------------------------------------------------
-   Decorative horizontal rules — gold leaf divider
-   ----------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   15. Horizontal rule — gold-leaf divider
+   ---------------------------------------------------------------- */
 hr {
   border: none !important;
   height: 1px !important;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(201, 152, 10, 0.4) 20%,
-    rgba(124, 58, 237, 0.5) 50%,
-    rgba(201, 152, 10, 0.4) 80%,
+    rgba(201, 152, 10, 0.45) 22%,
+    rgba(124, 58, 237, 0.55) 50%,
+    rgba(201, 152, 10, 0.45) 78%,
     transparent 100%
   ) !important;
-  margin: 1rem 0 !important;
+  position: relative;
+  margin: 1.2rem 0 !important;
 }
 
-/* -----------------------------------------------------------
-   Ambient background — deep purple radial + light parchment
-   ----------------------------------------------------------- */
-.dark body {
-  background:
-    radial-gradient(ellipse 80% 60% at 80% 0%, rgba(124, 58, 237, 0.10), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 10% 100%, rgba(201, 152, 10, 0.06), transparent 65%),
-    linear-gradient(180deg, #0c0a17 0%, #080612 100%) !important;
-  background-attachment: fixed !important;
+/* ----------------------------------------------------------------
+   16. Links & selection
+   ---------------------------------------------------------------- */
+.dark a:not([class*="button"]):not([class*="btn"]) { color: var(--kb-gold-warm); }
+.dark a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--kb-gold-pale); }
+.light a:not([class*="button"]):not([class*="btn"]),
+:root:not(.dark) a:not([class*="button"]):not([class*="btn"]) { color: var(--kb-plum); }
+.light a:hover:not([class*="button"]):not([class*="btn"]),
+:root:not(.dark) a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--kb-plum-deep); }
+
+.dark ::selection { background: rgba(201, 152, 10, 0.35); color: #fff8e7; }
+.light ::selection,
+:root:not(.dark) ::selection { background: rgba(124, 58, 237, 0.22); color: var(--color-gray-950); }
+
+/* ----------------------------------------------------------------
+   17. Focus rings on inputs — candle flicker
+   ---------------------------------------------------------------- */
+.dark input:focus:not([type="checkbox"]):not([type="radio"]) {
+  outline: none !important;
+  border-color: var(--kb-gold) !important;
+  box-shadow: 0 0 0 2px rgba(201, 152, 10, 0.25) !important;
+}
+.light input:focus:not([type="checkbox"]):not([type="radio"]),
+:root:not(.dark) input:focus:not([type="checkbox"]):not([type="radio"]) {
+  outline: none !important;
+  border-color: var(--kb-plum) !important;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
 }
 
-.light body,
-:root:not(.dark) body {
-  background:
-    radial-gradient(ellipse 70% 50% at 85% 5%, rgba(124, 58, 237, 0.08), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 5% 100%, rgba(201, 152, 10, 0.05), transparent 60%),
-    #f5f2ff !important;
-  background-attachment: fixed !important;
+/* ----------------------------------------------------------------
+   18. Scroll-to-bottom button — gold medallion
+   ---------------------------------------------------------------- */
+.dark button[aria-label*="scroll" i],
+.dark button[aria-label*="bottom" i] {
+  background: radial-gradient(circle at 30% 30%, #e8c66b, var(--kb-gold) 55%, var(--kb-gold-deep) 100%) !important;
+  color: var(--kb-ink) !important;
+  border: 1px solid rgba(232, 198, 107, 0.55) !important;
+  box-shadow: 0 4px 18px rgba(201, 152, 10, 0.4) !important;
 }
 
-/* -----------------------------------------------------------
-   Chat input — glowing focus ring with gold on dark
-   ----------------------------------------------------------- */
-.dark .flex.w-full[class*="rounded-"]:has(textarea),
-.dark [class*="chat-input-container"] {
-  border: 1px solid rgba(124, 58, 237, 0.25) !important;
+/* ----------------------------------------------------------------
+   19. Splash / onboarding — logo glow
+   ---------------------------------------------------------------- */
+html.dark #splash-screen { background: #060410 !important; }
+html:not(.dark) #splash-screen { background: #f5eeff !important; }
+#progress-bar {
+  background: linear-gradient(90deg, var(--kb-plum), var(--kb-gold-warm)) !important;
+}
+html.dark #logo {
+  filter: drop-shadow(0 0 24px rgba(201, 152, 10, 0.55))
+          drop-shadow(0 0 8px rgba(124, 58, 237, 0.4)) !important;
+}
+html:not(.dark) #logo {
+  filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.4))
+          drop-shadow(0 0 6px rgba(201, 152, 10, 0.25)) !important;
+}
+
+/* ----------------------------------------------------------------
+   20. Auth / login — captain's ledger card
+   ---------------------------------------------------------------- */
+.dark [class*="auth"] form,
+.dark [class*="login"] form {
+  background: linear-gradient(
+    180deg,
+    rgba(28, 22, 61, 0.88),
+    rgba(12, 9, 24, 0.94)
+  ) !important;
+  border: 1px solid rgba(201, 152, 10, 0.28) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 14px !important;
+  padding: 2rem;
   box-shadow:
-    0 0 0 1px rgba(124, 58, 237, 0.08),
-    0 6px 24px -8px rgba(12, 10, 23, 0.8) !important;
-  transition: box-shadow 0.25s ease, border-color 0.25s ease;
-}
-.dark .flex.w-full[class*="rounded-"]:has(textarea:focus),
-.dark [class*="chat-input-container"]:focus-within {
-  border-color: rgba(201, 152, 10, 0.5) !important;
-  box-shadow:
-    0 0 0 1px rgba(201, 152, 10, 0.35),
-    0 0 22px -4px rgba(201, 152, 10, 0.35) !important;
+    0 0 0 1px rgba(124, 58, 237, 0.18),
+    0 28px 70px -20px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(232, 198, 107, 0.12) !important;
 }
 
-/* -----------------------------------------------------------
-   Tooltips — parchment feel
-   ----------------------------------------------------------- */
-.tippy-box[data-theme~='dark'] {
-  background: linear-gradient(180deg, #1d1940 0%, #161330 100%) !important;
+/* ----------------------------------------------------------------
+   21. Placeholder text — aged ink
+   ---------------------------------------------------------------- */
+.dark textarea::placeholder,
+.dark input::placeholder {
+  color: rgba(199, 188, 226, 0.4) !important;
+  font-style: italic;
+  font-family: 'EB Garamond', Georgia, serif !important;
+}
+.light textarea::placeholder,
+.light input::placeholder,
+:root:not(.dark) textarea::placeholder,
+:root:not(.dark) input::placeholder {
+  color: rgba(97, 73, 176, 0.5) !important;
+  font-style: italic;
+  font-family: 'EB Garamond', Georgia, serif !important;
+}
+
+/* ----------------------------------------------------------------
+   22. Tooltips — parchment
+   ---------------------------------------------------------------- */
+.tippy-box {
+  background: linear-gradient(180deg, #1c163d 0%, #0c0918 100%) !important;
   border: 1px solid rgba(201, 152, 10, 0.35) !important;
-  color: #ece8f8 !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  color: #ece6fa !important;
+  font-family: 'EB Garamond', Georgia, serif !important;
+  font-size: 0.92rem;
   letter-spacing: 0.01em;
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55) !important;
+  box-shadow:
+    0 0 0 1px rgba(124, 58, 237, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.55) !important;
 }
+.tippy-box .tippy-arrow { color: #1c163d !important; }
 
-/* -----------------------------------------------------------
-   Name badge / avatars — gold ring on Kolb-Bot assistant
-   ----------------------------------------------------------- */
-.dark [alt*="Kolb"],
-.dark [alt*="kolb"],
-.dark img[alt*="assistant"] {
-  box-shadow: 0 0 0 1.5px rgba(201, 152, 10, 0.55),
-              0 0 12px rgba(201, 152, 10, 0.35) !important;
+/* ----------------------------------------------------------------
+   23. Avatars — gold ring on Kolb-Bot
+   ---------------------------------------------------------------- */
+.dark [alt*="Kolb" i],
+.dark img[alt*="assistant" i] {
+  box-shadow:
+    0 0 0 1.5px rgba(201, 152, 10, 0.55),
+    0 0 14px rgba(201, 152, 10, 0.35) !important;
   border-radius: 50% !important;
 }
 
-/* -----------------------------------------------------------
-   Auth / login page — centered parchment card feel
-   ----------------------------------------------------------- */
-.dark [class*="auth"] form,
-.dark [class*="login"] form {
-  background: linear-gradient(180deg, rgba(29, 25, 64, 0.75), rgba(16, 14, 31, 0.85)) !important;
-  border: 1px solid rgba(124, 58, 237, 0.25) !important;
-  backdrop-filter: blur(6px);
-  border-radius: 14px !important;
-  box-shadow:
-    0 0 0 1px rgba(201, 152, 10, 0.15),
-    0 24px 60px -20px rgba(0, 0, 0, 0.7) !important;
+/* ----------------------------------------------------------------
+   24. Disable over-bright hover washes that fight the theme
+   ---------------------------------------------------------------- */
+.dark [class*="hover:bg-gray-50"]:hover,
+.dark [class*="hover:bg-white"]:hover {
+  background-color: rgba(201, 152, 10, 0.10) !important;
+  color: var(--kb-gold-warm) !important;
 }
 
-/* -----------------------------------------------------------
-   Scroll-to-bottom floating button — gold medallion
-   ----------------------------------------------------------- */
-.dark button[aria-label*="scroll" i],
-.dark button[aria-label*="bottom" i] {
-  background: radial-gradient(circle at 30% 30%, #e8b931, #c9980a 55%, #8b6508 100%) !important;
-  color: #1a1230 !important;
-  border: 1px solid rgba(232, 185, 49, 0.55) !important;
-  box-shadow: 0 4px 16px rgba(201, 152, 10, 0.35) !important;
+.light [class*="hover:bg-gray-100"]:hover,
+:root:not(.dark) [class*="hover:bg-gray-100"]:hover {
+  background-color: rgba(124, 58, 237, 0.08) !important;
 }
 
-/* -----------------------------------------------------------
-   Splash / onboarding text glow
-   ----------------------------------------------------------- */
-html.dark #logo {
-  filter: drop-shadow(0 0 20px rgba(201, 152, 10, 0.45))
-          drop-shadow(0 0 6px rgba(124, 58, 237, 0.35)) !important;
+/* ----------------------------------------------------------------
+   25. Destructive / warning — crimson ember
+   ---------------------------------------------------------------- */
+.dark button[class*="red"],
+.dark [class*="text-red"] {
+  color: #d47580 !important;
 }
-html:not(.dark) #logo {
-  filter: drop-shadow(0 0 18px rgba(124, 58, 237, 0.35)) !important;
+.dark button.bg-red-500,
+.dark button.bg-red-600,
+.dark button.bg-red-700 {
+  background: linear-gradient(135deg, #a83645 0%, #8b2635 100%) !important;
+  color: #ffeaea !important;
+  border: 1px solid rgba(212, 117, 128, 0.4) !important;
 }

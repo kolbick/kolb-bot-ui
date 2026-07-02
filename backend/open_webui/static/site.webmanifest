@@ -1,6 +1,6 @@
 {
-  "name": "Kolb-Bot",
-  "short_name": "Kolb-Bot",
+  "name": "Open WebUI",
+  "short_name": "WebUI",
   "icons": [
     {
       "src": "/static/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#2a0850",
-  "background_color": "#160227",
+  "theme_color": "#12001f",
+  "background_color": "#12001f",
   "display": "standalone"
 }
