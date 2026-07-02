@@ -723,8 +723,10 @@ body {
 }
 
 .dark body {
-	background: #171717;
-	color: #eee;
+	background:
+		radial-gradient(circle at 15% 15%, rgba(41, 201, 232, 0.08), transparent 35%),
+		linear-gradient(150deg, #060d1b 0%, #0b1b36 55%, #081426 100%);
+	color: #dce9f2;
 }
 
 /* Position the handle relative to each LI */

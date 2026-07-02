@@ -1,96 +1,237 @@
-/* ============================================================
-   Tide-Bot Theme — AI Pirate / Purple & Gold
-   ============================================================ */
+/* ================================================================
+   TIDE-BOT — Changing Tides Treatment Center
+   Atmosphere: night watch on calm water. Deep navy hulls, aqua
+   running lights, warm sand accents. Clean and legible for
+   clinical staff; nautical in color, not in costume.
+   Palette (official): Tide Navy #0B1B36 · Deep Ocean #124D78 ·
+   Aqua Glow #29C9E8 · Seafoam #9BE6E8 · Sand #FFF3DD ·
+   Shell #FFFBF3 · Driftwood #8B735C · Signal Blue #1877D2
+   ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
-
-/* ----------------------------------------------------------
-   CSS Variables
-   ---------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   1. Palette tokens
+   ---------------------------------------------------------------- */
 :root {
-  --tb-gold: #c9980a;
-  --tb-gold-light: #e8b931;
-  --tb-gold-dim: #b8860b;
-  --tb-purple: #7c3aed;
-  --tb-purple-light: #a78bfa;
+  --tb-navy:        #0B1B36;
+  --tb-navy-deep:   #060D1B;
+  --tb-ocean:       #124D78;
+  --tb-aqua:        #29C9E8;
+  --tb-aqua-soft:   rgba(41, 201, 232, 0.45);
+  --tb-seafoam:     #9BE6E8;
+  --tb-sand:        #FFF3DD;
+  --tb-shell:       #FFFBF3;
+  --tb-driftwood:   #8B735C;
+  --tb-signal:      #1877D2;
+  --tb-signal-deep: #0F5AA6;
+  --tb-ember:       #b23a48;   /* danger / destructive */
 }
 
-/* ----------------------------------------------------------
-   Dark mode — purple-tinted gray scale
-   ---------------------------------------------------------- */
+/* Dark mode — deep water at night, aqua running lights */
 .dark {
-  --color-gray-950: #0c0a17;
-  --color-gray-900: #100e1f;
-  --color-gray-850: #161330;
-  --color-gray-800: #1d1940;
-  --color-gray-700: #2b2558;
-  --color-gray-600: #4e4680;
-  --color-gray-500: #6e659a;
-  --color-gray-400: #9890b8;
-  --color-gray-300: #c0bad8;
-  --color-gray-200: #d8d3ed;
-  --color-gray-100: #ece8f8;
-  --color-gray-50:  #f5f3ff;
+  --color-gray-950: #040A14;
+  --color-gray-900: #081426;
+  --color-gray-850: #0C1D36;
+  --color-gray-800: #112845;
+  --color-gray-700: #1B3A5E;
+  --color-gray-600: #2E567E;
+  --color-gray-500: #4A7399;
+  --color-gray-400: #6E93B3;
+  --color-gray-300: #9BB8CE;
+  --color-gray-200: #C2D6E4;
+  --color-gray-100: #DCE9F2;
+  --color-gray-50:  #EFF6FA;
 }
 
-/* ----------------------------------------------------------
-   Light mode — lavender/purple aesthetic
-   ---------------------------------------------------------- */
+/* Light mode — morning shore: shell white, sand, navy ink */
 .light,
 :root:not(.dark) {
-  --color-gray-950: #1e1a3e;
-  --color-gray-900: #2d2558;
-  --color-gray-850: #3b3470;
-  --color-gray-800: #4e4680;
-  --color-gray-700: #6b5fa8;
-  --color-gray-600: #8b82b5;
-  --color-gray-500: #a89fd8;
-  --color-gray-400: #bdb6e4;
-  --color-gray-300: #d4cef5;
-  --color-gray-200: #e4dcff;
-  --color-gray-100: #ede8ff;
-  --color-gray-50:  #f5f2ff;
+  --color-gray-950: #0B1B36;
+  --color-gray-900: #10294D;
+  --color-gray-850: #163A63;
+  --color-gray-800: #1E4C79;
+  --color-gray-700: #2A5E8E;
+  --color-gray-600: #3E6E97;
+  --color-gray-500: #5D88AB;
+  --color-gray-400: #8FAEC5;
+  --color-gray-300: #BCD2E0;
+  --color-gray-200: #D8E6EF;
+  --color-gray-100: #EAF2F7;
+  --color-gray-50:  #F6FAFC;
 }
 
-/* ----------------------------------------------------------
-   Scrollbars — purple track, gold on hover
-   ---------------------------------------------------------- */
-.dark ::-webkit-scrollbar { width: 5px; height: 5px; }
-.dark ::-webkit-scrollbar-track { background: #100e1f; }
-.dark ::-webkit-scrollbar-thumb { background: #3b3470; border-radius: 4px; }
-.dark ::-webkit-scrollbar-thumb:hover { background: #c9980a; }
+/* ----------------------------------------------------------------
+   2. Typography — keep the app's native sans (Inter/Archivo) for
+   clinical legibility; reserve character for color and light.
+   Code stays mono.
+   ---------------------------------------------------------------- */
+pre, code, kbd, samp, tt,
+pre *, code * {
+  font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code',
+               'Consolas', monospace !important;
+  letter-spacing: 0 !important;
+}
+
+/* Brand name in the sidebar/header — spaced caps, like hull lettering */
+.sidebar [class*="font-primary"],
+header [class*="font-primary"] {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------------
+   3. Text-color sweep — nothing leaks to pure black/white
+   ---------------------------------------------------------------- */
+.dark .text-black,
+.dark [class*="dark:text-black"],
+.dark .text-gray-900,
+.dark [class*="dark:text-gray-900"] {
+  color: var(--color-gray-100) !important;
+}
+.dark .text-gray-800,
+.dark [class*="dark:text-gray-800"] {
+  color: var(--color-gray-200) !important;
+}
+.dark .text-gray-700,
+.dark [class*="dark:text-gray-700"] {
+  color: var(--color-gray-300) !important;
+}
+.dark .text-gray-600 { color: var(--color-gray-400) !important; }
+.dark .text-gray-500 { color: var(--color-gray-500) !important; }
+.dark .text-white    { color: #F2F8FC !important; }
+
+.light .text-black,
+:root:not(.dark) .text-black {
+  color: var(--color-gray-950) !important;
+}
+.light .text-gray-900,
+:root:not(.dark) .text-gray-900 {
+  color: var(--color-gray-900) !important;
+}
+.light .text-gray-800,
+:root:not(.dark) .text-gray-800 {
+  color: var(--color-gray-800) !important;
+}
+.light .text-gray-700,
+:root:not(.dark) .text-gray-700 {
+  color: var(--color-gray-700) !important;
+}
+.light .text-gray-600,
+:root:not(.dark) .text-gray-600 {
+  color: var(--color-gray-600) !important;
+}
+
+/* Active / selected tab lights up in aqua (dark) or signal blue (light) */
+.dark button[aria-selected="true"],
+.dark [role="tab"][aria-selected="true"],
+.dark .active {
+  color: var(--tb-aqua) !important;
+}
+.light button[aria-selected="true"],
+.light [role="tab"][aria-selected="true"],
+:root:not(.dark) button[aria-selected="true"] {
+  color: var(--tb-signal-deep) !important;
+  font-weight: 500;
+}
+
+/* ----------------------------------------------------------------
+   4. Body background — moonlit water, aqua glow on the horizon
+   ---------------------------------------------------------------- */
+.dark body {
+  background:
+    radial-gradient(ellipse 55% 40% at 72% 6%, rgba(41, 201, 232, 0.08), transparent 60%),
+    radial-gradient(ellipse 45% 45% at 10% 94%, rgba(24, 119, 210, 0.10), transparent 65%),
+    linear-gradient(180deg, #081426 0%, #040A14 100%) !important;
+  background-attachment: fixed !important;
+}
+
+.light body,
+:root:not(.dark) body {
+  background:
+    radial-gradient(ellipse 60% 45% at 85% 4%, rgba(41, 201, 232, 0.10), transparent 58%),
+    radial-gradient(ellipse 45% 40% at 5% 96%, rgba(255, 243, 221, 0.55), transparent 62%),
+    #F6FAFC !important;
+  background-attachment: fixed !important;
+}
+
+/* Faint surface ripple — barely visible texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(rgba(155, 230, 232, 0.02) 1px, transparent 1px);
+  background-size: 3px 3px;
+  mix-blend-mode: overlay;
+}
+.light body::before,
+:root:not(.dark) body::before {
+  background-image:
+    radial-gradient(rgba(11, 27, 54, 0.03) 1px, transparent 1px);
+  mix-blend-mode: multiply;
+}
+
+/* ----------------------------------------------------------------
+   5. Scrollbars — polished rail over dark water
+   ---------------------------------------------------------------- */
+.dark ::-webkit-scrollbar        { width: 6px; height: 6px; }
+.dark ::-webkit-scrollbar-track  { background: transparent; }
+.dark ::-webkit-scrollbar-thumb  {
+  background: linear-gradient(180deg, #1B3A5E, #112845);
+  border-radius: 8px;
+  border: 1px solid rgba(41, 201, 232, 0.10);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--tb-aqua), var(--tb-signal));
+}
 
 .light ::-webkit-scrollbar,
-:root:not(.dark) ::-webkit-scrollbar { width: 5px; height: 5px; }
+:root:not(.dark) ::-webkit-scrollbar        { width: 6px; height: 6px; }
 .light ::-webkit-scrollbar-track,
-:root:not(.dark) ::-webkit-scrollbar-track { background: #ede8ff; }
+:root:not(.dark) ::-webkit-scrollbar-track  { background: transparent; }
 .light ::-webkit-scrollbar-thumb,
-:root:not(.dark) ::-webkit-scrollbar-thumb { background: #c8c0f0; border-radius: 4px; }
+:root:not(.dark) ::-webkit-scrollbar-thumb  {
+  background: linear-gradient(180deg, #BCD2E0, #8FAEC5);
+  border-radius: 8px;
+}
 .light ::-webkit-scrollbar-thumb:hover,
-:root:not(.dark) ::-webkit-scrollbar-thumb:hover { background: #c9980a; }
+:root:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--tb-signal), var(--tb-signal-deep));
+}
 
-/* ----------------------------------------------------------
-   Sidebar — deeper purple with gold accent stripe
-   ---------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   6. Sidebar — dark hull panel with an aqua waterline
+   ---------------------------------------------------------------- */
 .dark #sidebar,
 .dark aside {
-  border-right: 1px solid #2b2558 !important;
-  background: linear-gradient(180deg, #120f28 0%, #0c0a17 100%) !important;
+  background: linear-gradient(180deg, #0A1830 0%, #050D1A 100%) !important;
+  border-right: 1px solid rgba(41, 201, 232, 0.08) !important;
+  box-shadow: inset -1px 0 0 rgba(24, 119, 210, 0.12);
 }
 .dark #sidebar::before,
 .dark aside::before {
   content: '';
   display: block;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #7c3aed, #c9980a, #7c3aed, transparent);
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--tb-signal) 25%,
+    var(--tb-aqua) 50%,
+    var(--tb-signal) 75%,
+    transparent 100%
+  );
+  opacity: 0.7;
 }
 
 .light #sidebar,
 .light aside,
 :root:not(.dark) #sidebar,
 :root:not(.dark) aside {
-  background: linear-gradient(180deg, #ede8ff 0%, #e4dcff 100%) !important;
-  border-right: 1px solid #d4cef5 !important;
+  background: linear-gradient(180deg, #EAF2F7 0%, #D8E6EF 100%) !important;
+  border-right: 1px solid rgba(18, 77, 120, 0.18) !important;
 }
 .light #sidebar::before,
 .light aside::before,
@@ -98,445 +239,426 @@
 :root:not(.dark) aside::before {
   content: '';
   display: block;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #7c3aed, #c9980a, #7c3aed, transparent);
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--tb-signal) 25%,
+    var(--tb-aqua) 50%,
+    var(--tb-signal) 75%,
+    transparent 100%
+  );
+  opacity: 0.6;
 }
 
-/* ----------------------------------------------------------
-   Sidebar brand name — Cinzel font for Tide-Bot header
-   ---------------------------------------------------------- */
-.dark .sidebar [class*="font-primary"],
-.light .sidebar [class*="font-primary"],
-:root:not(.dark) .sidebar [class*="font-primary"] {
-  font-family: 'Cinzel', 'Georgia', serif !important;
-  letter-spacing: 0.06em;
+/* ----------------------------------------------------------------
+   7. Sidebar logo — aqua running-light glow
+   ---------------------------------------------------------------- */
+.dark img[src*="splash"].dark\:invert,
+.dark img[src*="/static/splash"],
+nav img[src*="splash"] {
+  filter: drop-shadow(0 0 10px rgba(41, 201, 232, 0.40))
+          drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)) !important;
+  -webkit-filter: drop-shadow(0 0 10px rgba(41, 201, 232, 0.40))
+                  drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)) !important;
 }
 
-/* ----------------------------------------------------------
-   Active / selected sidebar chat items
-   ---------------------------------------------------------- */
+/* Tide-Bot badge — rounded, ringed in aqua */
+nav img[src*="/static/favicon"],
+nav img[src*="favicon.png"] {
+  border-radius: 0.85rem !important;
+  box-shadow:
+    0 0 0 1.5px rgba(41, 201, 232, 0.45),
+    0 2px 10px rgba(41, 201, 232, 0.22),
+    0 0 18px rgba(24, 119, 210, 0.28) !important;
+}
+
+/* ----------------------------------------------------------------
+   8. Selected / active chat item — aqua wake on dark water
+   ---------------------------------------------------------------- */
 .dark .selected,
 .dark [class*="selected"] {
-  background-color: rgba(124, 58, 237, 0.18) !important;
-  border-left: 2px solid #c9980a !important;
-  border-radius: 0 !important;
+  background: linear-gradient(
+    90deg,
+    rgba(41, 201, 232, 0.12) 0%,
+    rgba(24, 119, 210, 0.10) 60%,
+    transparent 100%
+  ) !important;
+  border-left: 2px solid var(--tb-aqua) !important;
+  border-radius: 0 6px 6px 0 !important;
+  box-shadow: inset 0 0 12px rgba(41, 201, 232, 0.07);
 }
+
 .light .selected,
 .light [class*="selected"],
 :root:not(.dark) .selected,
 :root:not(.dark) [class*="selected"] {
-  background-color: rgba(124, 58, 237, 0.12) !important;
-  border-left: 2px solid #c9980a !important;
-  border-radius: 0 !important;
+  background: linear-gradient(
+    90deg,
+    rgba(41, 201, 232, 0.14) 0%,
+    rgba(24, 119, 210, 0.10) 60%,
+    transparent 100%
+  ) !important;
+  border-left: 2px solid var(--tb-signal) !important;
+  border-radius: 0 6px 6px 0 !important;
 }
 
-/* ----------------------------------------------------------
-   Send button — gold in dark, purple in light
-   ---------------------------------------------------------- */
-.dark #send-message-button:not(:disabled) {
-  background-color: #b8860b !important;
-  color: #fff8e7 !important;
-}
-.dark #send-message-button:not(:disabled):hover {
-  background-color: #d4a017 !important;
-}
-
-.light #send-message-button:not(:disabled),
-:root:not(.dark) #send-message-button:not(:disabled) {
-  background-color: #7c3aed !important;
-  color: #fff !important;
-}
-.light #send-message-button:not(:disabled):hover,
-:root:not(.dark) #send-message-button:not(:disabled):hover {
-  background-color: #6d28d9 !important;
+/* ----------------------------------------------------------------
+   9. Nav / top bar
+   ---------------------------------------------------------------- */
+.dark #nav,
+.dark header,
+.dark nav:not(aside nav) {
+  border-bottom: 1px solid rgba(41, 201, 232, 0.10) !important;
+  backdrop-filter: blur(8px);
 }
 
-/* ----------------------------------------------------------
-   Chat input area
-   ---------------------------------------------------------- */
+.light #nav,
+.light header,
+:root:not(.dark) #nav,
+:root:not(.dark) header {
+  background-color: rgba(234, 242, 247, 0.85) !important;
+  border-bottom: 1px solid rgba(18, 77, 120, 0.15) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* ----------------------------------------------------------------
+   10. Chat input — chart table under a lamp
+   ---------------------------------------------------------------- */
 .dark #chat-input,
 .dark [id*="chat-input"],
 .dark textarea {
-  background-color: #1d1940 !important;
-  border-color: #2b2558 !important;
-  color: #e8e0f0 !important;
+  background-color: rgba(8, 20, 38, 0.85) !important;
+  border: 1px solid rgba(24, 119, 210, 0.25) !important;
+  color: #DCE9F2 !important;
 }
 .dark textarea:focus,
 .dark #chat-input:focus {
-  border-color: #7c3aed !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.25) !important;
+  outline: none !important;
+  border-color: rgba(41, 201, 232, 0.55) !important;
+  box-shadow:
+    0 0 0 1px rgba(41, 201, 232, 0.30),
+    0 0 22px -4px rgba(41, 201, 232, 0.30) !important;
 }
 
 .light #chat-input,
 .light textarea,
 :root:not(.dark) #chat-input,
 :root:not(.dark) textarea {
-  background-color: #ffffff !important;
-  border-color: #c8c0f0 !important;
+  background-color: #FFFDF8 !important;
+  border: 1px solid rgba(18, 77, 120, 0.28) !important;
+  color: var(--color-gray-900) !important;
+}
+.light textarea:focus,
+:root:not(.dark) textarea:focus {
+  border-color: var(--tb-signal) !important;
+  box-shadow:
+    0 0 0 1px rgba(24, 119, 210, 0.25),
+    0 0 20px -4px rgba(24, 119, 210, 0.25) !important;
 }
 
-/* ----------------------------------------------------------
-   Navigation bar
-   ---------------------------------------------------------- */
-.dark #nav,
-.dark header,
-.dark nav {
-  border-bottom: 1px solid #2b2558 !important;
+/* ----------------------------------------------------------------
+   11. Buttons — aqua beacon (dark) / signal blue (light)
+   ---------------------------------------------------------------- */
+.dark #send-message-button:not(:disabled),
+.dark button.bg-black,
+.dark button.bg-white,
+.dark button[class*="bg-gray-100"]:not([class*="hover"]) {
+  background: linear-gradient(
+    135deg,
+    var(--tb-seafoam) 0%,
+    var(--tb-aqua) 45%,
+    #1FA6D0 70%,
+    var(--tb-signal) 100%
+  ) !important;
+  color: #06202E !important;
+  border: 1px solid rgba(155, 230, 232, 0.45) !important;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(220, 250, 255, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(230, 252, 255, 0.45),
+    inset 0 -1px 0 rgba(10, 60, 90, 0.30),
+    0 2px 8px rgba(41, 201, 232, 0.28) !important;
+  transition: transform 0.1s ease-out, box-shadow 0.18s ease-out;
+}
+.dark #send-message-button:not(:disabled):hover,
+.dark button.bg-black:hover,
+.dark button.bg-white:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(230, 252, 255, 0.55),
+    inset 0 -1px 0 rgba(10, 60, 90, 0.30),
+    0 4px 14px rgba(41, 201, 232, 0.45) !important;
+  transform: translateY(-0.5px);
+}
+.dark #send-message-button:not(:disabled):active {
+  transform: translateY(0.5px);
 }
 
-.light #nav,
-.light header,
-.light nav,
-:root:not(.dark) #nav,
-:root:not(.dark) header,
-:root:not(.dark) nav {
-  background-color: #f0ebff !important;
-  border-bottom: 1px solid #d4cef5 !important;
+.light #send-message-button:not(:disabled),
+.light button.bg-black,
+:root:not(.dark) #send-message-button:not(:disabled),
+:root:not(.dark) button.bg-black {
+  background: linear-gradient(
+    135deg,
+    #2E8FE0 0%,
+    var(--tb-signal) 50%,
+    var(--tb-signal-deep) 100%
+  ) !important;
+  color: #fff !important;
+  border: 1px solid rgba(41, 201, 232, 0.40) !important;
+  letter-spacing: 0.02em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 2px 10px rgba(24, 119, 210, 0.32) !important;
+}
+.light #send-message-button:not(:disabled):hover,
+:root:not(.dark) #send-message-button:not(:disabled):hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 4px 14px rgba(24, 119, 210, 0.45) !important;
+  transform: translateY(-0.5px);
 }
 
-/* ----------------------------------------------------------
-   Focused inputs
-   ---------------------------------------------------------- */
-.dark input:focus:not([type="checkbox"]):not([type="radio"]) {
-  outline: none !important;
-  border-color: #7c3aed !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
+/* ----------------------------------------------------------------
+   12. Chat messages — clear, roomy reading
+   ---------------------------------------------------------------- */
+.dark [id^="message-"] .prose,
+.dark [id^="message-"] p {
+  line-height: 1.6;
+  color: var(--color-gray-100) !important;
 }
-.light input:focus:not([type="checkbox"]):not([type="radio"]),
-:root:not(.dark) input:focus:not([type="checkbox"]):not([type="radio"]) {
-  outline: none !important;
-  border-color: #7c3aed !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15) !important;
-}
-
-/* ----------------------------------------------------------
-   Links
-   ---------------------------------------------------------- */
-.dark a:not([class*="button"]):not([class*="btn"]) { color: #c9980a; }
-.dark a:hover:not([class*="button"]):not([class*="btn"]) { color: #e8b931; }
-.light a:not([class*="button"]):not([class*="btn"]),
-:root:not(.dark) a:not([class*="button"]):not([class*="btn"]) { color: #7c3aed; }
-.light a:hover:not([class*="button"]):not([class*="btn"]),
-:root:not(.dark) a:hover:not([class*="button"]):not([class*="btn"]) { color: #6d28d9; }
-
-/* ----------------------------------------------------------
-   Text selection
-   ---------------------------------------------------------- */
-.dark ::selection { background: rgba(201, 152, 10, 0.3); color: #f5f3ff; }
-.light ::selection,
-:root:not(.dark) ::selection { background: rgba(124, 58, 237, 0.2); color: #1e1a3e; }
-
-/* ----------------------------------------------------------
-   Modals / dialogs
-   ---------------------------------------------------------- */
-.dark [class*="modal"],
-.dark [role="dialog"] {
-  border: 1px solid #2b2558 !important;
+.light [id^="message-"] .prose,
+.light [id^="message-"] p,
+:root:not(.dark) [id^="message-"] .prose,
+:root:not(.dark) [id^="message-"] p {
+  line-height: 1.6;
+  color: var(--color-gray-900) !important;
 }
 
-/* ----------------------------------------------------------
-   Code blocks
-   ---------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   13. Modals / dialogs — navy card with an aqua rim
+   ---------------------------------------------------------------- */
+.dark [role="dialog"],
+.dark [class*="Modal"]  > div > div,
+.dark dialog {
+  background: linear-gradient(
+    180deg,
+    rgba(17, 40, 69, 0.96) 0%,
+    rgba(6, 13, 27, 0.98) 100%
+  ) !important;
+  border: 1px solid rgba(41, 201, 232, 0.22) !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 0 0 1px rgba(24, 119, 210, 0.12),
+    0 24px 60px -12px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(155, 230, 232, 0.08) !important;
+  backdrop-filter: blur(8px);
+}
+
+.light [role="dialog"],
+.light [class*="Modal"]  > div > div,
+:root:not(.dark) [role="dialog"],
+:root:not(.dark) dialog {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 251, 243, 0.97) 0%,
+    rgba(234, 242, 247, 0.97) 100%
+  ) !important;
+  border: 1px solid rgba(24, 119, 210, 0.25) !important;
+  border-radius: 10px !important;
+  box-shadow:
+    0 0 0 1px rgba(41, 201, 232, 0.12),
+    0 22px 55px -14px rgba(11, 27, 54, 0.25) !important;
+  backdrop-filter: blur(6px);
+}
+
+/* ----------------------------------------------------------------
+   14. Code blocks — chart annotations
+   ---------------------------------------------------------------- */
 .dark pre,
 .dark code {
-  background-color: #161330 !important;
-  border: 1px solid #2b2558 !important;
+  background-color: rgba(4, 10, 20, 0.85) !important;
+  border: 1px solid rgba(41, 201, 232, 0.12) !important;
+  border-left: 2px solid rgba(41, 201, 232, 0.40) !important;
+  color: var(--tb-seafoam) !important;
 }
+.dark pre code { color: #DCE9F2 !important; background: transparent !important; }
+
 .light pre,
+:root:not(.dark) pre {
+  background-color: #EAF2F7 !important;
+  border: 1px solid rgba(18, 77, 120, 0.22) !important;
+  border-left: 2px solid var(--tb-signal) !important;
+}
 .light code,
-:root:not(.dark) pre,
 :root:not(.dark) code {
-  background-color: #ede8ff !important;
-  border: 1px solid #d4cef5 !important;
+  background-color: rgba(41, 201, 232, 0.10) !important;
+  border: 1px solid rgba(24, 119, 210, 0.20) !important;
+  color: var(--tb-signal-deep) !important;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
 }
 
-/* ----------------------------------------------------------
-   Logo glow
-   ---------------------------------------------------------- */
-.dark img[src*="favicon"],
-.dark img[src*="splash"] {
-  filter: drop-shadow(0 0 6px rgba(201, 152, 10, 0.5));
-}
-.light img[src*="favicon"],
-.light img[src*="splash"],
-:root:not(.dark) img[src*="favicon"],
-:root:not(.dark) img[src*="splash"] {
-  filter: drop-shadow(0 0 5px rgba(124, 58, 237, 0.3));
-}
-
-/* ----------------------------------------------------------
-   Parchment text tint
-   ---------------------------------------------------------- */
-.dark body,
-.dark p,
-.dark span,
-.dark div {
-  --tw-prose-body: #e0d8f0;
-}
-
-/* ----------------------------------------------------------
-   Background crosshatch texture — barely visible
-   ---------------------------------------------------------- */
-.dark body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.025;
-  background-image:
-    repeating-linear-gradient(45deg, #a78bfa 0px, #a78bfa 1px, transparent 1px, transparent 8px),
-    repeating-linear-gradient(-45deg, #a78bfa 0px, #a78bfa 1px, transparent 1px, transparent 8px);
-}
-
-/* ----------------------------------------------------------
-   Splash / loading screen
-   ---------------------------------------------------------- */
-html.dark #splash-screen { background: #0c0a17 !important; }
-html:not(.dark) #splash-screen { background: #f5f2ff !important; }
-#progress-bar { background: linear-gradient(90deg, #7c3aed, #c9980a) !important; }
-
-/* ----------------------------------------------------------
-   Light mode backgrounds
-   ---------------------------------------------------------- */
-.light body,
-:root:not(.dark) body { background-color: #f5f2ff !important; }
-
-/* ==========================================================
-   TIDE-BOT DISTINCTIVE TREATMENTS
-   ========================================================== */
-
-/* Kill the Tailwind `dark:invert` that ruins the color pirate
-   logo in the mini-sidebar, and force square badge corners. */
-.dark img[src*="/static/splash.png"],
-.dark nav img[src*="splash"] {
-  filter: drop-shadow(0 0 8px rgba(201, 152, 10, 0.55)) !important;
-  mix-blend-mode: normal !important;
-  -webkit-filter: drop-shadow(0 0 8px rgba(201, 152, 10, 0.55)) !important;
-}
-img[src*="/static/splash.png"].invert,
-img[src*="/static/splash.png"].dark\:invert,
-.dark img[src*="/static/splash.png"] {
-  filter: drop-shadow(0 0 8px rgba(201, 152, 10, 0.45)) !important;
-}
-/* Un-invert everywhere — our logos are already designed for both modes */
-img[src*="/static/splash"].dark\:invert,
-img[src*="/static/favicon"].dark\:invert {
-  filter: drop-shadow(0 0 6px rgba(201, 152, 10, 0.4)) !important;
-}
-
-/* Force rounded-2xl on the sidebar chat favicon regardless of selection */
-nav img[src*="/static/favicon.png"] {
-  border-radius: 0.85rem !important;
-  box-shadow: 0 0 0 1.5px rgba(201, 152, 10, 0.35),
-              0 2px 10px rgba(124, 58, 237, 0.3) !important;
-}
-
-/* -----------------------------------------------------------
-   Cinzel display font on title-like elements
-   ----------------------------------------------------------- */
-h1, h2, .modal-title,
-[class*="page-title"],
-[data-title],
-title {
-  font-family: 'Cinzel', 'Georgia', serif !important;
-  letter-spacing: 0.04em;
-}
-
-/* Chat top bar app name / breadcrumb */
-header .font-primary,
-nav .font-primary,
-[class*="font-primary"] {
-  font-family: 'Cinzel', 'Georgia', serif !important;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-/* -----------------------------------------------------------
-   Chat messages — distinctive Tide-Bot treatment
-   -----------------------------------------------------------
-   Assistant bubble gets a subtle gold left rule + parchment
-   tint. User bubble gets a purple accent rule on the right. */
-.dark [id^="message-"],
-.dark .chat-assistant,
-.dark .chat-user {
-  position: relative;
-}
-
-/* Assistant messages (left-aligned, no role='user' ancestor) */
-.dark [id^="message-"]:not([class*="user"]) > div:first-child,
-.dark .chat-assistant > div:first-child {
-  border-left: 2px solid rgba(201, 152, 10, 0.45);
-  padding-left: 0.85rem;
-  background: linear-gradient(
-    90deg,
-    rgba(124, 58, 237, 0.035) 0%,
-    rgba(12, 10, 23, 0) 60%
-  );
-  border-radius: 0 6px 6px 0;
-}
-
-.light [id^="message-"]:not([class*="user"]) > div:first-child,
-.light .chat-assistant > div:first-child,
-:root:not(.dark) [id^="message-"]:not([class*="user"]) > div:first-child {
-  border-left: 2px solid rgba(201, 152, 10, 0.55);
-  padding-left: 0.85rem;
-  background: linear-gradient(
-    90deg,
-    rgba(124, 58, 237, 0.05) 0%,
-    rgba(245, 242, 255, 0) 60%
-  );
-  border-radius: 0 6px 6px 0;
-}
-
-/* -----------------------------------------------------------
-   Buttons — Tide-Bot stamp treatment
-   ----------------------------------------------------------- */
-.dark button[type="submit"]:not(:disabled),
-.dark .btn-primary,
-.dark [class*="bg-black"]:hover {
-  transition: all 0.18s ease-out;
-}
-
-/* Primary call-to-action buttons */
-.dark button.bg-black,
-.dark button[class*="bg-gray-900"]:not([class*="hover"]) {
-  background: linear-gradient(135deg, #b8860b 0%, #c9980a 55%, #8b6508 100%) !important;
-  color: #fff8e7 !important;
-  border: 1px solid rgba(232, 185, 49, 0.3) !important;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 230, 150, 0.3),
-    0 2px 8px rgba(201, 152, 10, 0.25) !important;
-}
-.dark button.bg-black:hover {
-  background: linear-gradient(135deg, #d4a017 0%, #e8b931 55%, #b8860b 100%) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 230, 150, 0.4),
-    0 4px 14px rgba(201, 152, 10, 0.45) !important;
-}
-
-.light button.bg-black,
-:root:not(.dark) button.bg-black {
-  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #6d28d9 100%) !important;
-  color: #fff !important;
-  border: 1px solid rgba(167, 139, 250, 0.3) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 2px 10px rgba(124, 58, 237, 0.35) !important;
-}
-
-/* -----------------------------------------------------------
-   Decorative horizontal rules — gold leaf divider
-   ----------------------------------------------------------- */
+/* ----------------------------------------------------------------
+   15. Horizontal rule — waterline divider
+   ---------------------------------------------------------------- */
 hr {
   border: none !important;
   height: 1px !important;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(201, 152, 10, 0.4) 20%,
-    rgba(124, 58, 237, 0.5) 50%,
-    rgba(201, 152, 10, 0.4) 80%,
+    rgba(41, 201, 232, 0.45) 22%,
+    rgba(24, 119, 210, 0.55) 50%,
+    rgba(41, 201, 232, 0.45) 78%,
     transparent 100%
   ) !important;
-  margin: 1rem 0 !important;
+  position: relative;
+  margin: 1.2rem 0 !important;
 }
 
-/* -----------------------------------------------------------
-   Ambient background — deep purple radial + light parchment
-   ----------------------------------------------------------- */
-.dark body {
-  background:
-    radial-gradient(ellipse 80% 60% at 80% 0%, rgba(124, 58, 237, 0.10), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 10% 100%, rgba(201, 152, 10, 0.06), transparent 65%),
-    linear-gradient(180deg, #0c0a17 0%, #080612 100%) !important;
-  background-attachment: fixed !important;
+/* ----------------------------------------------------------------
+   16. Links & selection
+   ---------------------------------------------------------------- */
+.dark a:not([class*="button"]):not([class*="btn"]) { color: var(--tb-aqua); }
+.dark a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--tb-seafoam); }
+.light a:not([class*="button"]):not([class*="btn"]),
+:root:not(.dark) a:not([class*="button"]):not([class*="btn"]) { color: var(--tb-signal); }
+.light a:hover:not([class*="button"]):not([class*="btn"]),
+:root:not(.dark) a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--tb-signal-deep); }
+
+.dark ::selection { background: rgba(41, 201, 232, 0.32); color: #F2FBFE; }
+.light ::selection,
+:root:not(.dark) ::selection { background: rgba(24, 119, 210, 0.22); color: var(--color-gray-950); }
+
+/* ----------------------------------------------------------------
+   17. Focus rings on inputs — beacon pulse
+   ---------------------------------------------------------------- */
+.dark input:focus:not([type="checkbox"]):not([type="radio"]) {
+  outline: none !important;
+  border-color: var(--tb-aqua) !important;
+  box-shadow: 0 0 0 2px rgba(41, 201, 232, 0.25) !important;
+}
+.light input:focus:not([type="checkbox"]):not([type="radio"]),
+:root:not(.dark) input:focus:not([type="checkbox"]):not([type="radio"]) {
+  outline: none !important;
+  border-color: var(--tb-signal) !important;
+  box-shadow: 0 0 0 2px rgba(24, 119, 210, 0.20) !important;
 }
 
-.light body,
-:root:not(.dark) body {
-  background:
-    radial-gradient(ellipse 70% 50% at 85% 5%, rgba(124, 58, 237, 0.08), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 5% 100%, rgba(201, 152, 10, 0.05), transparent 60%),
-    #f5f2ff !important;
-  background-attachment: fixed !important;
+/* ----------------------------------------------------------------
+   18. Scroll-to-bottom button — aqua buoy
+   ---------------------------------------------------------------- */
+.dark button[aria-label*="scroll" i],
+.dark button[aria-label*="bottom" i] {
+  background: radial-gradient(circle at 30% 30%, var(--tb-seafoam), var(--tb-aqua) 55%, var(--tb-signal) 100%) !important;
+  color: var(--tb-navy) !important;
+  border: 1px solid rgba(155, 230, 232, 0.55) !important;
+  box-shadow: 0 4px 18px rgba(41, 201, 232, 0.38) !important;
 }
 
-/* -----------------------------------------------------------
-   Chat input — glowing focus ring with gold on dark
-   ----------------------------------------------------------- */
-.dark .flex.w-full[class*="rounded-"]:has(textarea),
-.dark [class*="chat-input-container"] {
-  border: 1px solid rgba(124, 58, 237, 0.25) !important;
+/* ----------------------------------------------------------------
+   19. Splash / onboarding — logo glow
+   ---------------------------------------------------------------- */
+html.dark #splash-screen { background: #040A14 !important; }
+html:not(.dark) #splash-screen { background: #F6FAFC !important; }
+#progress-bar {
+  background: linear-gradient(90deg, var(--tb-signal), var(--tb-aqua)) !important;
+}
+html.dark #logo {
+  filter: drop-shadow(0 0 24px rgba(41, 201, 232, 0.50))
+          drop-shadow(0 0 8px rgba(24, 119, 210, 0.40)) !important;
+}
+html:not(.dark) #logo {
+  filter: drop-shadow(0 0 20px rgba(24, 119, 210, 0.35))
+          drop-shadow(0 0 6px rgba(41, 201, 232, 0.25)) !important;
+}
+
+/* ----------------------------------------------------------------
+   20. Auth / login — wheelhouse card
+   ---------------------------------------------------------------- */
+.dark [class*="auth"] form,
+.dark [class*="login"] form {
+  background: linear-gradient(
+    180deg,
+    rgba(17, 40, 69, 0.88),
+    rgba(6, 13, 27, 0.94)
+  ) !important;
+  border: 1px solid rgba(41, 201, 232, 0.25) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 14px !important;
+  padding: 2rem;
   box-shadow:
-    0 0 0 1px rgba(124, 58, 237, 0.08),
-    0 6px 24px -8px rgba(12, 10, 23, 0.8) !important;
-  transition: box-shadow 0.25s ease, border-color 0.25s ease;
-}
-.dark .flex.w-full[class*="rounded-"]:has(textarea:focus),
-.dark [class*="chat-input-container"]:focus-within {
-  border-color: rgba(201, 152, 10, 0.5) !important;
-  box-shadow:
-    0 0 0 1px rgba(201, 152, 10, 0.35),
-    0 0 22px -4px rgba(201, 152, 10, 0.35) !important;
+    0 0 0 1px rgba(24, 119, 210, 0.18),
+    0 28px 70px -20px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(155, 230, 232, 0.12) !important;
 }
 
-/* -----------------------------------------------------------
-   Tooltips — parchment feel
-   ----------------------------------------------------------- */
-.tippy-box[data-theme~='dark'] {
-  background: linear-gradient(180deg, #1d1940 0%, #161330 100%) !important;
-  border: 1px solid rgba(201, 152, 10, 0.35) !important;
-  color: #ece8f8 !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+/* ----------------------------------------------------------------
+   21. Placeholder text — pencil on chart paper
+   ---------------------------------------------------------------- */
+.dark textarea::placeholder,
+.dark input::placeholder {
+  color: rgba(155, 184, 206, 0.45) !important;
+}
+.light textarea::placeholder,
+.light input::placeholder,
+:root:not(.dark) textarea::placeholder,
+:root:not(.dark) input::placeholder {
+  color: rgba(18, 77, 120, 0.50) !important;
+}
+
+/* ----------------------------------------------------------------
+   22. Tooltips — dark chart card
+   ---------------------------------------------------------------- */
+.tippy-box {
+  background: linear-gradient(180deg, #112845 0%, #081426 100%) !important;
+  border: 1px solid rgba(41, 201, 232, 0.35) !important;
+  color: #DCE9F2 !important;
+  font-size: 0.92rem;
   letter-spacing: 0.01em;
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.55) !important;
+  box-shadow:
+    0 0 0 1px rgba(24, 119, 210, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.55) !important;
 }
+.tippy-box .tippy-arrow { color: #112845 !important; }
 
-/* -----------------------------------------------------------
-   Name badge / avatars — gold ring on Tide-Bot assistant
-   ----------------------------------------------------------- */
-.dark [alt*="Tide"],
-.dark [alt*="tide"],
-.dark img[alt*="assistant"] {
-  box-shadow: 0 0 0 1.5px rgba(201, 152, 10, 0.55),
-              0 0 12px rgba(201, 152, 10, 0.35) !important;
+/* ----------------------------------------------------------------
+   23. Avatars — aqua ring on Tide-Bot
+   ---------------------------------------------------------------- */
+.dark [alt*="Tide" i],
+.dark img[alt*="assistant" i] {
+  box-shadow:
+    0 0 0 1.5px rgba(41, 201, 232, 0.55),
+    0 0 14px rgba(41, 201, 232, 0.32) !important;
   border-radius: 50% !important;
 }
 
-/* -----------------------------------------------------------
-   Auth / login page — centered parchment card feel
-   ----------------------------------------------------------- */
-.dark [class*="auth"] form,
-.dark [class*="login"] form {
-  background: linear-gradient(180deg, rgba(29, 25, 64, 0.75), rgba(16, 14, 31, 0.85)) !important;
-  border: 1px solid rgba(124, 58, 237, 0.25) !important;
-  backdrop-filter: blur(6px);
-  border-radius: 14px !important;
-  box-shadow:
-    0 0 0 1px rgba(201, 152, 10, 0.15),
-    0 24px 60px -20px rgba(0, 0, 0, 0.7) !important;
+/* ----------------------------------------------------------------
+   24. Hover washes tuned to the water
+   ---------------------------------------------------------------- */
+.dark [class*="hover:bg-gray-50"]:hover,
+.dark [class*="hover:bg-white"]:hover {
+  background-color: rgba(41, 201, 232, 0.10) !important;
+  color: var(--tb-seafoam) !important;
 }
 
-/* -----------------------------------------------------------
-   Scroll-to-bottom floating button — gold medallion
-   ----------------------------------------------------------- */
-.dark button[aria-label*="scroll" i],
-.dark button[aria-label*="bottom" i] {
-  background: radial-gradient(circle at 30% 30%, #e8b931, #c9980a 55%, #8b6508 100%) !important;
-  color: #1a1230 !important;
-  border: 1px solid rgba(232, 185, 49, 0.55) !important;
-  box-shadow: 0 4px 16px rgba(201, 152, 10, 0.35) !important;
+.light [class*="hover:bg-gray-100"]:hover,
+:root:not(.dark) [class*="hover:bg-gray-100"]:hover {
+  background-color: rgba(24, 119, 210, 0.08) !important;
 }
 
-/* -----------------------------------------------------------
-   Splash / onboarding text glow
-   ----------------------------------------------------------- */
-html.dark #logo {
-  filter: drop-shadow(0 0 20px rgba(201, 152, 10, 0.45))
-          drop-shadow(0 0 6px rgba(124, 58, 237, 0.35)) !important;
+/* ----------------------------------------------------------------
+   25. Destructive / warning — signal flare
+   ---------------------------------------------------------------- */
+.dark button[class*="red"],
+.dark [class*="text-red"] {
+  color: #E08894 !important;
 }
-html:not(.dark) #logo {
-  filter: drop-shadow(0 0 18px rgba(124, 58, 237, 0.35)) !important;
+.dark button.bg-red-500,
+.dark button.bg-red-600,
+.dark button.bg-red-700 {
+  background: linear-gradient(135deg, #C4485A 0%, var(--tb-ember) 100%) !important;
+  color: #FFEAEA !important;
+  border: 1px solid rgba(224, 136, 148, 0.4) !important;
 }

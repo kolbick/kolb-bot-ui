@@ -151,15 +151,15 @@
 
 			if (isDarkMode) {
 				const darkImage = new Image();
-				darkImage.src = `${WEBUI_BASE_URL}/static/favicon-dark.png`;
+				darkImage.src = '/logo-128.png';
 
 				darkImage.onload = () => {
-					logo.src = `${WEBUI_BASE_URL}/static/favicon-dark.png`;
-					logo.style.filter = ''; // Ensure no inversion is applied if favicon-dark.png exists
+					logo.src = '/logo-128.png';
+					logo.style.filter = '';
 				};
 
 				darkImage.onerror = () => {
-					logo.style.filter = 'invert(1)'; // Invert image if favicon-dark.png is missing
+					logo.style.filter = '';
 				};
 			}
 		}
@@ -229,8 +229,10 @@
 	}}
 />
 
-<div class="w-full h-screen max-h-[100dvh] text-white relative" id="auth-page">
-	<div class="w-full h-full absolute top-0 left-0 bg-white dark:bg-black"></div>
+<div class="w-full h-screen max-h-[100dvh] text-white relative overflow-hidden" id="auth-page">
+	<div class="w-full h-full absolute top-0 left-0 auth-backdrop"></div>
+	<div class="auth-glow auth-glow-top" aria-hidden="true"></div>
+	<div class="auth-glow auth-glow-bottom" aria-hidden="true"></div>
 
 	<div class="w-full absolute top-0 left-0 right-0 h-8 drag-region" />
 
@@ -256,14 +258,21 @@
 					</div>
 				{:else}
 					<div class="my-auto flex flex-col justify-center items-center">
-						<div id="auth-login-card" class=" sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
+						<div id="auth-login-card" class="auth-panel sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
+							<div class="flex justify-center mb-4">
+								<img
+									src="/assets/tide-bot-brand/tidebot-wordmark-680x210.png"
+									class="w-56 max-w-full drop-shadow-[0_2px_12px_rgba(41,201,232,0.35)]"
+									alt="{$WEBUI_NAME} wordmark"
+								/>
+							</div>
 							{#if $config?.metadata?.auth_logo_position === 'center'}
 								<div class="flex justify-center mb-6">
 									<img
 										id="logo"
 										crossorigin="anonymous"
-										src="{WEBUI_BASE_URL}/static/favicon.png"
-										class="size-24 rounded-full"
+										src="/logo-512.png"
+										class="size-28 rounded-3xl border border-cyan-300/35 shadow-2xl shadow-blue-950/60 bg-[#0B1B36]/60 p-2"
 										alt="{$WEBUI_NAME} logo"
 									/>
 								</div>
@@ -276,7 +285,7 @@
 								}}
 							>
 								<div class="mb-1">
-									<div class=" text-2xl font-medium">
+									<div class="text-2xl font-semibold auth-title">
 										{#if $config?.onboarding ?? false}
 											{$i18n.t(`Get started with {{WEBUI_NAME}}`, { WEBUI_NAME: $WEBUI_NAME })}
 										{:else if mode === 'ldap'}
@@ -289,7 +298,7 @@
 									</div>
 
 									{#if $config?.onboarding ?? false}
-										<div class="mt-1 text-xs font-medium text-gray-600 dark:text-gray-500">
+										<div class="mt-1 text-xs font-medium text-cyan-100/75">
 											ⓘ {$WEBUI_NAME}
 											{$i18n.t(
 												'does not make any external connections, and your data stays securely on your locally hosted server.'
@@ -302,14 +311,14 @@
 									<div class="flex flex-col mt-4">
 										{#if mode === 'signup'}
 											<div class="mb-2">
-												<label for="name" class="text-sm font-medium text-left mb-1 block"
+												<label for="name" class="text-sm font-medium text-left mb-1 block text-cyan-100"
 													>{$i18n.t('Name')}</label
 												>
 												<input
 													bind:value={name}
 													type="text"
 													id="name"
-													class="my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600"
+													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-cyan-200/40"
 													autocomplete="name"
 													placeholder={$i18n.t('Enter Your Full Name')}
 													required
@@ -319,13 +328,13 @@
 
 										{#if mode === 'ldap'}
 											<div class="mb-2">
-												<label for="username" class="text-sm font-medium text-left mb-1 block"
+												<label for="username" class="text-sm font-medium text-left mb-1 block text-cyan-100"
 													>{$i18n.t('Username')}</label
 												>
 												<input
 													bind:value={ldapUsername}
 													type="text"
-													class="my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600"
+													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-cyan-200/40"
 													autocomplete="username"
 													name="username"
 													id="username"
@@ -335,14 +344,14 @@
 											</div>
 										{:else}
 											<div class="mb-2">
-												<label for="email" class="text-sm font-medium text-left mb-1 block"
+												<label for="email" class="text-sm font-medium text-left mb-1 block text-cyan-100"
 													>{$i18n.t('Email')}</label
 												>
 												<input
 													bind:value={email}
 													type="email"
 													id="email"
-													class="my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600"
+													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-cyan-200/40"
 													autocomplete="email"
 													name="email"
 													placeholder={$i18n.t('Enter Your Email')}
@@ -352,14 +361,14 @@
 										{/if}
 
 										<div>
-											<label for="password" class="text-sm font-medium text-left mb-1 block"
+											<label for="password" class="text-sm font-medium text-left mb-1 block text-cyan-100"
 												>{$i18n.t('Password')}</label
 											>
 											<SensitiveInput
 												bind:value={password}
 												type="password"
 												id="password"
-												class="my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600"
+												class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-cyan-200/40"
 												placeholder={$i18n.t('Enter Your Password')}
 												autocomplete={mode === 'signup' ? 'new-password' : 'current-password'}
 												name="password"
@@ -373,14 +382,14 @@
 											<div class="mt-2">
 												<label
 													for="confirm-password"
-													class="text-sm font-medium text-left mb-1 block"
+													class="text-sm font-medium text-left mb-1 block text-cyan-100"
 													>{$i18n.t('Confirm Password')}</label
 												>
 												<SensitiveInput
 													bind:value={confirmPassword}
 													type="password"
 													id="confirm-password"
-													class="my-0.5 w-full text-sm outline-hidden bg-transparent"
+													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent"
 													placeholder={$i18n.t('Confirm Your Password')}
 													autocomplete="new-password"
 													name="confirm-password"
@@ -394,14 +403,14 @@
 									{#if $config?.features.enable_login_form || $config?.features.enable_ldap || form}
 										{#if mode === 'ldap'}
 											<button
-												class="bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+												class="auth-button auth-button-primary transition w-full rounded-full font-semibold text-sm py-2.5"
 												type="submit"
 											>
 												{$i18n.t('Authenticate')}
 											</button>
 										{:else}
 											<button
-												class="bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+												class="auth-button auth-button-primary transition w-full rounded-full font-semibold text-sm py-2.5"
 												type="submit"
 											>
 												{mode === 'signin'
@@ -412,13 +421,13 @@
 											</button>
 
 											{#if $config?.features.enable_signup && !($config?.onboarding ?? false)}
-												<div class=" mt-4 text-sm text-center">
+												<div class="mt-4 text-sm text-center text-cyan-100/85">
 													{mode === 'signin'
 														? $i18n.t("Don't have an account?")
 														: $i18n.t('Already have an account?')}
 
 													<button
-														class=" font-medium underline"
+														class="font-medium underline text-cyan-300 hover:text-cyan-200 transition-colors"
 														type="button"
 														on:click={() => {
 															if (mode === 'signin') {
@@ -439,20 +448,20 @@
 
 							{#if Object.keys($config?.oauth?.providers ?? {}).length > 0}
 								<div class="inline-flex items-center justify-center w-full">
-									<hr class="w-32 h-px my-4 border-0 dark:bg-gray-100/10 bg-gray-700/10" />
+									<hr class="w-32 h-px my-4 border-0 bg-cyan-300/20" />
 									{#if $config?.features.enable_login_form || $config?.features.enable_ldap || form}
 										<span
-											class="px-3 text-sm font-medium text-gray-900 dark:text-white bg-transparent"
+											class="px-3 text-sm font-medium text-cyan-100 bg-transparent"
 											>{$i18n.t('or')}</span
 										>
 									{/if}
 
-									<hr class="w-32 h-px my-4 border-0 dark:bg-gray-100/10 bg-gray-700/10" />
+									<hr class="w-32 h-px my-4 border-0 bg-cyan-300/20" />
 								</div>
 								<div class="flex flex-col space-y-2">
 									{#if $config?.oauth?.providers?.google}
 										<button
-											class="flex justify-center items-center bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+											class="auth-button auth-button-secondary flex justify-center items-center transition w-full rounded-full font-medium text-sm py-2.5"
 											on:click={() => {
 												window.location.href = `${WEBUI_BASE_URL}/oauth/google/login`;
 											}}
@@ -482,7 +491,7 @@
 									{/if}
 									{#if $config?.oauth?.providers?.microsoft}
 										<button
-											class="flex justify-center items-center bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+											class="auth-button auth-button-secondary flex justify-center items-center transition w-full rounded-full font-medium text-sm py-2.5"
 											on:click={() => {
 												window.location.href = `${WEBUI_BASE_URL}/oauth/microsoft/login`;
 											}}
@@ -513,7 +522,7 @@
 									{/if}
 									{#if $config?.oauth?.providers?.github}
 										<button
-											class="flex justify-center items-center bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+											class="auth-button auth-button-secondary flex justify-center items-center transition w-full rounded-full font-medium text-sm py-2.5"
 											on:click={() => {
 												window.location.href = `${WEBUI_BASE_URL}/oauth/github/login`;
 											}}
@@ -534,7 +543,7 @@
 									{/if}
 									{#if $config?.oauth?.providers?.oidc}
 										<button
-											class="flex justify-center items-center bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+											class="auth-button auth-button-secondary flex justify-center items-center transition w-full rounded-full font-medium text-sm py-2.5"
 											on:click={() => {
 												window.location.href = `${WEBUI_BASE_URL}/oauth/oidc/login`;
 											}}
@@ -564,7 +573,7 @@
 									{/if}
 									{#if $config?.oauth?.providers?.feishu}
 										<button
-											class="flex justify-center items-center bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-medium text-sm py-2.5"
+											class="auth-button auth-button-secondary flex justify-center items-center transition w-full rounded-full font-medium text-sm py-2.5"
 											on:click={() => {
 												window.location.href = `${WEBUI_BASE_URL}/oauth/feishu/login`;
 											}}
@@ -578,7 +587,7 @@
 							{#if $config?.features.enable_ldap && $config?.features.enable_login_form}
 								<div class="mt-2">
 									<button
-										class="flex justify-center items-center text-xs w-full text-center underline"
+										class="flex justify-center items-center text-xs w-full text-center underline text-cyan-300 hover:text-cyan-200 transition-colors"
 										type="button"
 										on:click={() => {
 											if (mode === 'ldap')
@@ -597,7 +606,7 @@
 						</div>
 						{#if $config?.metadata?.login_footer}
 							<div class="max-w-3xl mx-auto">
-								<div class="mt-2 text-[0.7rem] text-gray-500 dark:text-gray-400 marked">
+								<div class="mt-2 text-[0.7rem] text-cyan-100/60 marked">
 									{@html DOMPurify.sanitize(marked($config?.metadata?.login_footer))}
 								</div>
 							</div>
@@ -614,8 +623,8 @@
 						<img
 							id="logo"
 							crossorigin="anonymous"
-							src="{WEBUI_BASE_URL}/static/favicon.png"
-							class=" w-6 rounded-full"
+							src="/logo-128.png"
+							class="w-8 rounded-xl border border-cyan-300/35 bg-[#0B1B36]/60 p-1"
 							alt=""
 						/>
 					</div>
@@ -624,3 +633,91 @@
 		{/if}
 	{/if}
 </div>
+
+<style>
+	#auth-page {
+		background:
+			radial-gradient(circle at 15% 18%, rgba(41, 201, 232, 0.20), transparent 42%),
+			radial-gradient(circle at 78% 6%, rgba(24, 119, 210, 0.22), transparent 38%),
+			linear-gradient(150deg, #060d1b 0%, #0b1b36 52%, #0e2244 100%);
+	}
+
+	.auth-backdrop {
+		background: radial-gradient(circle at 50% 100%, rgba(18, 77, 120, 0.55), transparent 50%);
+	}
+
+	.auth-glow {
+		position: absolute;
+		width: 22rem;
+		height: 22rem;
+		border-radius: 9999px;
+		filter: blur(48px);
+		opacity: 0.25;
+	}
+
+	.auth-glow-top {
+		top: -6rem;
+		right: -4rem;
+		background: #29c9e8;
+	}
+
+	.auth-glow-bottom {
+		bottom: -7rem;
+		left: -5rem;
+		background: #1877d2;
+	}
+
+	.auth-panel {
+		background: rgba(11, 27, 54, 0.72);
+		border: 1px solid rgba(41, 201, 232, 0.25);
+		border-radius: 1.25rem;
+		padding: 2rem 2.25rem;
+		backdrop-filter: blur(12px);
+		box-shadow:
+			0 0 0 1px rgba(24, 119, 210, 0.15),
+			0 28px 70px -22px rgba(0, 0, 0, 0.75),
+			inset 0 1px 0 rgba(155, 230, 232, 0.12);
+	}
+
+	.auth-title {
+		color: #9be6e8;
+		letter-spacing: 0.01em;
+	}
+
+	:global(.auth-input) {
+		border-bottom: 1px solid rgba(41, 201, 232, 0.28);
+		border-radius: 0;
+		padding-bottom: 0.35rem;
+		color: #eff6fa;
+		transition: border-color 0.15s ease-out;
+	}
+
+	:global(.auth-input:focus) {
+		border-bottom-color: #29c9e8;
+	}
+
+	.auth-button {
+		border: 1px solid rgba(41, 201, 232, 0.32);
+	}
+
+	.auth-button-primary {
+		background: linear-gradient(120deg, rgba(24, 119, 210, 0.92), rgba(15, 90, 166, 0.92));
+		color: #fffbf3;
+		box-shadow: 0 8px 28px rgba(4, 10, 20, 0.4);
+	}
+
+	.auth-button-primary:hover {
+		background: linear-gradient(120deg, rgba(41, 201, 232, 0.9), rgba(24, 119, 210, 0.95));
+		color: #ffffff;
+	}
+
+	.auth-button-secondary {
+		background: rgba(11, 27, 54, 0.5);
+		color: #eff6fa;
+	}
+
+	.auth-button-secondary:hover {
+		background: rgba(18, 77, 120, 0.6);
+		color: #9be6e8;
+	}
+</style>

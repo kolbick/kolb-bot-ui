@@ -1,111 +1,69 @@
 /* ================================================================
-   TIDE-BOT — AI Pirate Assistant
-   Atmosphere: a captain's quarters at dusk. Candlelight on gold leaf,
-   weathered amethyst velvet, a 17th-century Oxford type-case. No slop.
+   TIDE-BOT — Changing Tides Treatment Center
+   Atmosphere: night watch on calm water. Deep navy hulls, aqua
+   running lights, warm sand accents. Clean and legible for
+   clinical staff; nautical in color, not in costume.
+   Palette (official): Tide Navy #0B1B36 · Deep Ocean #124D78 ·
+   Aqua Glow #29C9E8 · Seafoam #9BE6E8 · Sand #FFF3DD ·
+   Shell #FFFBF3 · Driftwood #8B735C · Signal Blue #1877D2
    ================================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
-
 /* ----------------------------------------------------------------
-   1. Palette — burnished gold + bruised amethyst
+   1. Palette tokens
    ---------------------------------------------------------------- */
 :root {
-  /* Gold accents */
-  --tb-gold:        #c9980a;
-  --tb-gold-warm:   #d4a51c;
-  --tb-gold-pale:   #e8c66b;
-  --tb-gold-deep:   #8b6508;
-  --tb-gold-glow:   rgba(232, 198, 107, 0.45);
-
-  /* Purple/amethyst */
-  --tb-plum:        #7c3aed;
-  --tb-plum-deep:   #4c1d95;
-  --tb-amethyst:    #a78bfa;
-
-  /* Pirate neutrals */
-  --tb-ink:         #1a1230;    /* ink / darkest purple-black */
-  --tb-velvet:      #241845;    /* rich dark purple velvet */
-  --tb-ember:       #8b2635;    /* danger / destructive crimson */
-  --tb-vellum:      #f6efdc;    /* warm aged paper (accent only) */
+  --tb-navy:        #0B1B36;
+  --tb-navy-deep:   #060D1B;
+  --tb-ocean:       #124D78;
+  --tb-aqua:        #29C9E8;
+  --tb-aqua-soft:   rgba(41, 201, 232, 0.45);
+  --tb-seafoam:     #9BE6E8;
+  --tb-sand:        #FFF3DD;
+  --tb-shell:       #FFFBF3;
+  --tb-driftwood:   #8B735C;
+  --tb-signal:      #1877D2;
+  --tb-signal-deep: #0F5AA6;
+  --tb-ember:       #b23a48;   /* danger / destructive */
 }
 
-/* Dark mode — ship's cabin at midnight, lit by a brass lantern */
+/* Dark mode — deep water at night, aqua running lights */
 .dark {
-  --color-gray-950: #07050f;
-  --color-gray-900: #0c0918;
-  --color-gray-850: #14102a;
-  --color-gray-800: #1c163d;
-  --color-gray-700: #2b2358;
-  --color-gray-600: #4d4180;
-  --color-gray-500: #7566a6;
-  --color-gray-400: #9c91c4;
-  --color-gray-300: #c6bee2;
-  --color-gray-200: #ddd6ef;
-  --color-gray-100: #ece6fa;
-  --color-gray-50:  #f5f0ff;
+  --color-gray-950: #040A14;
+  --color-gray-900: #081426;
+  --color-gray-850: #0C1D36;
+  --color-gray-800: #112845;
+  --color-gray-700: #1B3A5E;
+  --color-gray-600: #2E567E;
+  --color-gray-500: #4A7399;
+  --color-gray-400: #6E93B3;
+  --color-gray-300: #9BB8CE;
+  --color-gray-200: #C2D6E4;
+  --color-gray-100: #DCE9F2;
+  --color-gray-50:  #EFF6FA;
 }
 
-/* Light mode — dawn watch, very light lavender parchment */
+/* Light mode — morning shore: shell white, sand, navy ink */
 .light,
 :root:not(.dark) {
-  --color-gray-950: #1e1440;
-  --color-gray-900: #2a1d5a;
-  --color-gray-850: #3a2a78;
-  --color-gray-800: #4b3a8f;
-  --color-gray-700: #6149b0;
-  --color-gray-600: #8572c4;
-  --color-gray-500: #a99add;
-  --color-gray-400: #bdb0e8;
-  --color-gray-300: #d4caf5;
-  --color-gray-200: #e3dafc;
-  --color-gray-100: #ede4ff;
-  --color-gray-50:  #f5eeff;
+  --color-gray-950: #0B1B36;
+  --color-gray-900: #10294D;
+  --color-gray-850: #163A63;
+  --color-gray-800: #1E4C79;
+  --color-gray-700: #2A5E8E;
+  --color-gray-600: #3E6E97;
+  --color-gray-500: #5D88AB;
+  --color-gray-400: #8FAEC5;
+  --color-gray-300: #BCD2E0;
+  --color-gray-200: #D8E6EF;
+  --color-gray-100: #EAF2F7;
+  --color-gray-50:  #F6FAFC;
 }
 
 /* ----------------------------------------------------------------
-   2. Typography — IM Fell English (display) + EB Garamond (body)
-   ----------------------------------------------------------------
-   Applied globally so the whole interface reads as a ship's log,
-   not an SaaS dashboard. EB Garamond at slightly larger size so the
-   classical serif doesn't feel cramped.                           */
-
-html, body {
-  font-family: 'EB Garamond', 'Garamond', 'Georgia', serif !important;
-  font-feature-settings: "liga" 1, "dlig" 1, "onum" 1, "hist" 1;
-  font-size: 16px;
-  text-rendering: geometricPrecision;
-  -webkit-font-smoothing: antialiased;
-}
-
-body, p, span, div, li, td, th, label,
-button, input, select, textarea, a {
-  font-family: 'EB Garamond', 'Garamond', 'Georgia', serif !important;
-  letter-spacing: 0.005em;
-}
-
-/* Display font: brand plaques, headings, modal titles, menus */
-h1, h2, h3,
-[class*="font-primary"],
-[data-title],
-.modal-title,
-dialog h1, dialog h2,
-[role="dialog"] h1, [role="dialog"] h2,
-[role="dialog"] h3 {
-  font-family: 'IM Fell English', 'EB Garamond', Georgia, serif !important;
-  letter-spacing: 0.01em;
-  font-weight: 400;
-}
-
-/* Brand name specifically — small caps, like a ship's plaque */
-.sidebar [class*="font-primary"],
-header [class*="font-primary"] {
-  font-family: 'IM Fell English SC', 'IM Fell English', Georgia, serif !important;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 400;
-}
-
-/* Keep code blocks in mono for legibility */
+   2. Typography — keep the app's native sans (Inter/Archivo) for
+   clinical legibility; reserve character for color and light.
+   Code stays mono.
+   ---------------------------------------------------------------- */
 pre, code, kbd, samp, tt,
 pre *, code * {
   font-family: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code',
@@ -113,13 +71,17 @@ pre *, code * {
   letter-spacing: 0 !important;
 }
 
+/* Brand name in the sidebar/header — spaced caps, like hull lettering */
+.sidebar [class*="font-primary"],
+header [class*="font-primary"] {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
 /* ----------------------------------------------------------------
    3. Text-color sweep — nothing leaks to pure black/white
-   ----------------------------------------------------------------
-   The base theme has hardcoded text-gray-900 / text-black classes
-   on many elements; push them toward our purple-tinted neutrals so
-   no label reads as harsh ink against our amethyst surfaces.      */
-
+   ---------------------------------------------------------------- */
 .dark .text-black,
 .dark [class*="dark:text-black"],
 .dark .text-gray-900,
@@ -136,7 +98,7 @@ pre *, code * {
 }
 .dark .text-gray-600 { color: var(--color-gray-400) !important; }
 .dark .text-gray-500 { color: var(--color-gray-500) !important; }
-.dark .text-white    { color: #f7f3ff !important; }
+.dark .text-white    { color: #F2F8FC !important; }
 
 .light .text-black,
 :root:not(.dark) .text-black {
@@ -159,40 +121,40 @@ pre *, code * {
   color: var(--color-gray-600) !important;
 }
 
-/* Active / selected tab lights up in gold (dark) or plum (light) */
+/* Active / selected tab lights up in aqua (dark) or signal blue (light) */
 .dark button[aria-selected="true"],
 .dark [role="tab"][aria-selected="true"],
 .dark .active {
-  color: var(--tb-gold-warm) !important;
+  color: var(--tb-aqua) !important;
 }
 .light button[aria-selected="true"],
 .light [role="tab"][aria-selected="true"],
 :root:not(.dark) button[aria-selected="true"] {
-  color: var(--tb-plum-deep) !important;
+  color: var(--tb-signal-deep) !important;
   font-weight: 500;
 }
 
 /* ----------------------------------------------------------------
-   4. Body background — candlelit ambient, no generic gradient
+   4. Body background — moonlit water, aqua glow on the horizon
    ---------------------------------------------------------------- */
 .dark body {
   background:
-    radial-gradient(ellipse 55% 40% at 72% 8%, rgba(201, 152, 10, 0.10), transparent 60%),
-    radial-gradient(ellipse 40% 45% at 12% 92%, rgba(124, 58, 237, 0.09), transparent 65%),
-    linear-gradient(180deg, #0a0815 0%, #060410 100%) !important;
+    radial-gradient(ellipse 55% 40% at 72% 6%, rgba(41, 201, 232, 0.08), transparent 60%),
+    radial-gradient(ellipse 45% 45% at 10% 94%, rgba(24, 119, 210, 0.10), transparent 65%),
+    linear-gradient(180deg, #081426 0%, #040A14 100%) !important;
   background-attachment: fixed !important;
 }
 
 .light body,
 :root:not(.dark) body {
   background:
-    radial-gradient(ellipse 60% 45% at 85% 5%, rgba(124, 58, 237, 0.09), transparent 58%),
-    radial-gradient(ellipse 45% 40% at 5% 95%, rgba(201, 152, 10, 0.06), transparent 62%),
-    #f5eeff !important;
+    radial-gradient(ellipse 60% 45% at 85% 4%, rgba(41, 201, 232, 0.10), transparent 58%),
+    radial-gradient(ellipse 45% 40% at 5% 96%, rgba(255, 243, 221, 0.55), transparent 62%),
+    #F6FAFC !important;
   background-attachment: fixed !important;
 }
 
-/* Subtle paper grain — barely visible, just enough to kill flatness */
+/* Faint surface ripple — barely visible texture */
 body::before {
   content: '';
   position: fixed;
@@ -200,29 +162,29 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background-image:
-    radial-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    radial-gradient(rgba(155, 230, 232, 0.02) 1px, transparent 1px);
   background-size: 3px 3px;
   mix-blend-mode: overlay;
 }
 .light body::before,
 :root:not(.dark) body::before {
   background-image:
-    radial-gradient(rgba(36, 24, 69, 0.035) 1px, transparent 1px);
+    radial-gradient(rgba(11, 27, 54, 0.03) 1px, transparent 1px);
   mix-blend-mode: multiply;
 }
 
 /* ----------------------------------------------------------------
-   5. Scrollbars — brass on velvet
+   5. Scrollbars — polished rail over dark water
    ---------------------------------------------------------------- */
 .dark ::-webkit-scrollbar        { width: 6px; height: 6px; }
 .dark ::-webkit-scrollbar-track  { background: transparent; }
 .dark ::-webkit-scrollbar-thumb  {
-  background: linear-gradient(180deg, #3a2f6e, #2b2358);
+  background: linear-gradient(180deg, #1B3A5E, #112845);
   border-radius: 8px;
-  border: 1px solid rgba(201, 152, 10, 0.08);
+  border: 1px solid rgba(41, 201, 232, 0.10);
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--tb-gold), var(--tb-gold-deep));
+  background: linear-gradient(180deg, var(--tb-aqua), var(--tb-signal));
 }
 
 .light ::-webkit-scrollbar,
@@ -231,22 +193,22 @@ body::before {
 :root:not(.dark) ::-webkit-scrollbar-track  { background: transparent; }
 .light ::-webkit-scrollbar-thumb,
 :root:not(.dark) ::-webkit-scrollbar-thumb  {
-  background: linear-gradient(180deg, #cfc1f0, #b5a4e3);
+  background: linear-gradient(180deg, #BCD2E0, #8FAEC5);
   border-radius: 8px;
 }
 .light ::-webkit-scrollbar-thumb:hover,
 :root:not(.dark) ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--tb-gold-warm), var(--tb-gold-deep));
+  background: linear-gradient(180deg, var(--tb-signal), var(--tb-signal-deep));
 }
 
 /* ----------------------------------------------------------------
-   6. Sidebar — dark velvet panel with gold filigree top edge
+   6. Sidebar — dark hull panel with an aqua waterline
    ---------------------------------------------------------------- */
 .dark #sidebar,
 .dark aside {
-  background: linear-gradient(180deg, #120d28 0%, #080514 100%) !important;
-  border-right: 1px solid rgba(201, 152, 10, 0.08) !important;
-  box-shadow: inset -1px 0 0 rgba(124, 58, 237, 0.12);
+  background: linear-gradient(180deg, #0A1830 0%, #050D1A 100%) !important;
+  border-right: 1px solid rgba(41, 201, 232, 0.08) !important;
+  box-shadow: inset -1px 0 0 rgba(24, 119, 210, 0.12);
 }
 .dark #sidebar::before,
 .dark aside::before {
@@ -256,9 +218,9 @@ body::before {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--tb-plum) 25%,
-    var(--tb-gold) 50%,
-    var(--tb-plum) 75%,
+    var(--tb-signal) 25%,
+    var(--tb-aqua) 50%,
+    var(--tb-signal) 75%,
     transparent 100%
   );
   opacity: 0.7;
@@ -268,8 +230,8 @@ body::before {
 .light aside,
 :root:not(.dark) #sidebar,
 :root:not(.dark) aside {
-  background: linear-gradient(180deg, #ede4ff 0%, #e0d3fc 100%) !important;
-  border-right: 1px solid rgba(97, 73, 176, 0.18) !important;
+  background: linear-gradient(180deg, #EAF2F7 0%, #D8E6EF 100%) !important;
+  border-right: 1px solid rgba(18, 77, 120, 0.18) !important;
 }
 .light #sidebar::before,
 .light aside::before,
@@ -281,50 +243,50 @@ body::before {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--tb-plum) 25%,
-    var(--tb-gold) 50%,
-    var(--tb-plum) 75%,
+    var(--tb-signal) 25%,
+    var(--tb-aqua) 50%,
+    var(--tb-signal) 75%,
     transparent 100%
   );
   opacity: 0.6;
 }
 
 /* ----------------------------------------------------------------
-   7. Sidebar logo — remove Tailwind's dark:invert, add candle-glow
+   7. Sidebar logo — aqua running-light glow
    ---------------------------------------------------------------- */
 .dark img[src*="splash"].dark\:invert,
 .dark img[src*="/static/splash"],
 nav img[src*="splash"] {
-  filter: drop-shadow(0 0 10px rgba(201, 152, 10, 0.45))
+  filter: drop-shadow(0 0 10px rgba(41, 201, 232, 0.40))
           drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)) !important;
-  -webkit-filter: drop-shadow(0 0 10px rgba(201, 152, 10, 0.45))
+  -webkit-filter: drop-shadow(0 0 10px rgba(41, 201, 232, 0.40))
                   drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)) !important;
 }
 
-/* Square Tide-Bot badge — always rounded, always with gold ring */
+/* Tide-Bot badge — rounded, ringed in aqua */
 nav img[src*="/static/favicon"],
 nav img[src*="favicon.png"] {
   border-radius: 0.85rem !important;
   box-shadow:
-    0 0 0 1.5px rgba(201, 152, 10, 0.45),
-    0 2px 10px rgba(201, 152, 10, 0.25),
-    0 0 18px rgba(124, 58, 237, 0.3) !important;
+    0 0 0 1.5px rgba(41, 201, 232, 0.45),
+    0 2px 10px rgba(41, 201, 232, 0.22),
+    0 0 18px rgba(24, 119, 210, 0.28) !important;
 }
 
 /* ----------------------------------------------------------------
-   8. Selected / active chat item — gold candle on velvet
+   8. Selected / active chat item — aqua wake on dark water
    ---------------------------------------------------------------- */
 .dark .selected,
 .dark [class*="selected"] {
   background: linear-gradient(
     90deg,
-    rgba(201, 152, 10, 0.14) 0%,
-    rgba(124, 58, 237, 0.10) 60%,
+    rgba(41, 201, 232, 0.12) 0%,
+    rgba(24, 119, 210, 0.10) 60%,
     transparent 100%
   ) !important;
-  border-left: 2px solid var(--tb-gold) !important;
+  border-left: 2px solid var(--tb-aqua) !important;
   border-radius: 0 6px 6px 0 !important;
-  box-shadow: inset 0 0 12px rgba(201, 152, 10, 0.08);
+  box-shadow: inset 0 0 12px rgba(41, 201, 232, 0.07);
 }
 
 .light .selected,
@@ -333,11 +295,11 @@ nav img[src*="favicon.png"] {
 :root:not(.dark) [class*="selected"] {
   background: linear-gradient(
     90deg,
-    rgba(201, 152, 10, 0.10) 0%,
-    rgba(124, 58, 237, 0.12) 60%,
+    rgba(41, 201, 232, 0.14) 0%,
+    rgba(24, 119, 210, 0.10) 60%,
     transparent 100%
   ) !important;
-  border-left: 2px solid var(--tb-gold) !important;
+  border-left: 2px solid var(--tb-signal) !important;
   border-radius: 0 6px 6px 0 !important;
 }
 
@@ -347,7 +309,7 @@ nav img[src*="favicon.png"] {
 .dark #nav,
 .dark header,
 .dark nav:not(aside nav) {
-  border-bottom: 1px solid rgba(201, 152, 10, 0.10) !important;
+  border-bottom: 1px solid rgba(41, 201, 232, 0.10) !important;
   backdrop-filter: blur(8px);
 }
 
@@ -355,51 +317,48 @@ nav img[src*="favicon.png"] {
 .light header,
 :root:not(.dark) #nav,
 :root:not(.dark) header {
-  background-color: rgba(240, 232, 255, 0.82) !important;
-  border-bottom: 1px solid rgba(97, 73, 176, 0.18) !important;
+  background-color: rgba(234, 242, 247, 0.85) !important;
+  border-bottom: 1px solid rgba(18, 77, 120, 0.15) !important;
   backdrop-filter: blur(8px);
 }
 
 /* ----------------------------------------------------------------
-   10. Chat input — brass-rimmed letter tray
+   10. Chat input — chart table under a lamp
    ---------------------------------------------------------------- */
 .dark #chat-input,
 .dark [id*="chat-input"],
 .dark textarea {
-  background-color: rgba(14, 10, 32, 0.85) !important;
-  border: 1px solid rgba(124, 58, 237, 0.22) !important;
-  color: #ece6fa !important;
-  font-family: 'EB Garamond', Georgia, serif !important;
-  font-size: 1.05rem;
-  letter-spacing: 0.01em;
+  background-color: rgba(8, 20, 38, 0.85) !important;
+  border: 1px solid rgba(24, 119, 210, 0.25) !important;
+  color: #DCE9F2 !important;
 }
 .dark textarea:focus,
 .dark #chat-input:focus {
   outline: none !important;
-  border-color: rgba(201, 152, 10, 0.55) !important;
+  border-color: rgba(41, 201, 232, 0.55) !important;
   box-shadow:
-    0 0 0 1px rgba(201, 152, 10, 0.35),
-    0 0 22px -4px rgba(201, 152, 10, 0.35) !important;
+    0 0 0 1px rgba(41, 201, 232, 0.30),
+    0 0 22px -4px rgba(41, 201, 232, 0.30) !important;
 }
 
 .light #chat-input,
 .light textarea,
 :root:not(.dark) #chat-input,
 :root:not(.dark) textarea {
-  background-color: #fdfaff !important;
-  border: 1px solid rgba(97, 73, 176, 0.28) !important;
+  background-color: #FFFDF8 !important;
+  border: 1px solid rgba(18, 77, 120, 0.28) !important;
   color: var(--color-gray-900) !important;
 }
 .light textarea:focus,
 :root:not(.dark) textarea:focus {
-  border-color: var(--tb-plum) !important;
+  border-color: var(--tb-signal) !important;
   box-shadow:
-    0 0 0 1px rgba(124, 58, 237, 0.25),
-    0 0 20px -4px rgba(124, 58, 237, 0.25) !important;
+    0 0 0 1px rgba(24, 119, 210, 0.25),
+    0 0 20px -4px rgba(24, 119, 210, 0.25) !important;
 }
 
 /* ----------------------------------------------------------------
-   11. Buttons — gold doubloon (dark) / plum wax seal (light)
+   11. Buttons — aqua beacon (dark) / signal blue (light)
    ---------------------------------------------------------------- */
 .dark #send-message-button:not(:disabled),
 .dark button.bg-black,
@@ -407,29 +366,28 @@ nav img[src*="favicon.png"] {
 .dark button[class*="bg-gray-100"]:not([class*="hover"]) {
   background: linear-gradient(
     135deg,
-    #e8c66b 0%,
-    var(--tb-gold-warm) 45%,
-    var(--tb-gold) 70%,
-    var(--tb-gold-deep) 100%
+    var(--tb-seafoam) 0%,
+    var(--tb-aqua) 45%,
+    #1FA6D0 70%,
+    var(--tb-signal) 100%
   ) !important;
-  color: #1a1230 !important;
-  border: 1px solid rgba(232, 198, 107, 0.45) !important;
-  font-family: 'IM Fell English', Georgia, serif !important;
-  letter-spacing: 0.05em;
-  text-shadow: 0 1px 0 rgba(255, 230, 150, 0.3);
+  color: #06202E !important;
+  border: 1px solid rgba(155, 230, 232, 0.45) !important;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 0 rgba(220, 250, 255, 0.35);
   box-shadow:
-    inset 0 1px 0 rgba(255, 240, 180, 0.4),
-    inset 0 -1px 0 rgba(120, 80, 0, 0.25),
-    0 2px 8px rgba(201, 152, 10, 0.3) !important;
+    inset 0 1px 0 rgba(230, 252, 255, 0.45),
+    inset 0 -1px 0 rgba(10, 60, 90, 0.30),
+    0 2px 8px rgba(41, 201, 232, 0.28) !important;
   transition: transform 0.1s ease-out, box-shadow 0.18s ease-out;
 }
 .dark #send-message-button:not(:disabled):hover,
 .dark button.bg-black:hover,
 .dark button.bg-white:hover {
   box-shadow:
-    inset 0 1px 0 rgba(255, 240, 180, 0.5),
-    inset 0 -1px 0 rgba(120, 80, 0, 0.25),
-    0 4px 14px rgba(232, 198, 107, 0.5) !important;
+    inset 0 1px 0 rgba(230, 252, 255, 0.55),
+    inset 0 -1px 0 rgba(10, 60, 90, 0.30),
+    0 4px 14px rgba(41, 201, 232, 0.45) !important;
   transform: translateY(-0.5px);
 }
 .dark #send-message-button:not(:disabled):active {
@@ -442,89 +400,58 @@ nav img[src*="favicon.png"] {
 :root:not(.dark) button.bg-black {
   background: linear-gradient(
     135deg,
-    #8b5cf6 0%,
-    var(--tb-plum) 50%,
-    var(--tb-plum-deep) 100%
+    #2E8FE0 0%,
+    var(--tb-signal) 50%,
+    var(--tb-signal-deep) 100%
   ) !important;
   color: #fff !important;
-  border: 1px solid rgba(167, 139, 250, 0.4) !important;
-  font-family: 'IM Fell English', Georgia, serif !important;
-  letter-spacing: 0.05em;
+  border: 1px solid rgba(41, 201, 232, 0.40) !important;
+  letter-spacing: 0.02em;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 2px 10px rgba(124, 58, 237, 0.35) !important;
+    0 2px 10px rgba(24, 119, 210, 0.32) !important;
 }
 .light #send-message-button:not(:disabled):hover,
 :root:not(.dark) #send-message-button:not(:disabled):hover {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 4px 14px rgba(124, 58, 237, 0.5) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 4px 14px rgba(24, 119, 210, 0.45) !important;
   transform: translateY(-0.5px);
 }
 
 /* ----------------------------------------------------------------
-   12. Chat messages — illuminated manuscript treatment
-   ----------------------------------------------------------------
-   Assistant block gets a gold-rule on the left and an illuminated
-   first-letter (Tide-Bot speaks in a captain's voice).            */
-
-.dark [id^="message-"],
-.light [id^="message-"],
-:root:not(.dark) [id^="message-"] {
-  position: relative;
-}
-
+   12. Chat messages — clear, roomy reading
+   ---------------------------------------------------------------- */
 .dark [id^="message-"] .prose,
 .dark [id^="message-"] p {
-  font-family: 'EB Garamond', Georgia, serif !important;
-  font-size: 1.08rem;
-  line-height: 1.62;
+  line-height: 1.6;
   color: var(--color-gray-100) !important;
 }
 .light [id^="message-"] .prose,
 .light [id^="message-"] p,
 :root:not(.dark) [id^="message-"] .prose,
 :root:not(.dark) [id^="message-"] p {
-  font-family: 'EB Garamond', Georgia, serif !important;
-  font-size: 1.08rem;
-  line-height: 1.62;
+  line-height: 1.6;
   color: var(--color-gray-900) !important;
 }
 
-/* Illuminated first letter on long assistant messages */
-.dark [id^="message-"] .prose > p:first-of-type::first-letter,
-.light [id^="message-"] .prose > p:first-of-type::first-letter,
-:root:not(.dark) [id^="message-"] .prose > p:first-of-type::first-letter {
-  font-family: 'IM Fell English', Georgia, serif !important;
-  font-size: 2.4em;
-  line-height: 0.9;
-  padding: 0.12em 0.12em 0 0;
-  margin-right: 0.05em;
-  float: left;
-  color: var(--tb-gold);
-  text-shadow:
-    0 0 8px rgba(201, 152, 10, 0.4),
-    0 1px 0 rgba(0, 0, 0, 0.3);
-  font-weight: 400;
-}
-
 /* ----------------------------------------------------------------
-   13. Modals / dialogs — parchment card with gold corners
+   13. Modals / dialogs — navy card with an aqua rim
    ---------------------------------------------------------------- */
 .dark [role="dialog"],
 .dark [class*="Modal"]  > div > div,
 .dark dialog {
   background: linear-gradient(
     180deg,
-    rgba(28, 22, 61, 0.96) 0%,
-    rgba(12, 9, 24, 0.98) 100%
+    rgba(17, 40, 69, 0.96) 0%,
+    rgba(6, 13, 27, 0.98) 100%
   ) !important;
-  border: 1px solid rgba(201, 152, 10, 0.22) !important;
+  border: 1px solid rgba(41, 201, 232, 0.22) !important;
   border-radius: 10px !important;
   box-shadow:
-    0 0 0 1px rgba(124, 58, 237, 0.12),
+    0 0 0 1px rgba(24, 119, 210, 0.12),
     0 24px 60px -12px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 rgba(232, 198, 107, 0.08) !important;
+    inset 0 1px 0 rgba(155, 230, 232, 0.08) !important;
   backdrop-filter: blur(8px);
 }
 
@@ -534,46 +461,46 @@ nav img[src*="favicon.png"] {
 :root:not(.dark) dialog {
   background: linear-gradient(
     180deg,
-    rgba(253, 250, 255, 0.97) 0%,
-    rgba(240, 232, 255, 0.97) 100%
+    rgba(255, 251, 243, 0.97) 0%,
+    rgba(234, 242, 247, 0.97) 100%
   ) !important;
-  border: 1px solid rgba(201, 152, 10, 0.28) !important;
+  border: 1px solid rgba(24, 119, 210, 0.25) !important;
   border-radius: 10px !important;
   box-shadow:
-    0 0 0 1px rgba(124, 58, 237, 0.10),
-    0 22px 55px -14px rgba(42, 29, 90, 0.25) !important;
+    0 0 0 1px rgba(41, 201, 232, 0.12),
+    0 22px 55px -14px rgba(11, 27, 54, 0.25) !important;
   backdrop-filter: blur(6px);
 }
 
 /* ----------------------------------------------------------------
-   14. Code blocks — inked passage in a ledger
+   14. Code blocks — chart annotations
    ---------------------------------------------------------------- */
 .dark pre,
 .dark code {
-  background-color: rgba(8, 6, 18, 0.85) !important;
-  border: 1px solid rgba(201, 152, 10, 0.12) !important;
-  border-left: 2px solid rgba(201, 152, 10, 0.35) !important;
-  color: #e8c66b !important;
+  background-color: rgba(4, 10, 20, 0.85) !important;
+  border: 1px solid rgba(41, 201, 232, 0.12) !important;
+  border-left: 2px solid rgba(41, 201, 232, 0.40) !important;
+  color: var(--tb-seafoam) !important;
 }
-.dark pre code { color: #ece6fa !important; background: transparent !important; }
+.dark pre code { color: #DCE9F2 !important; background: transparent !important; }
 
 .light pre,
 :root:not(.dark) pre {
-  background-color: #f0e8ff !important;
-  border: 1px solid rgba(97, 73, 176, 0.22) !important;
-  border-left: 2px solid var(--tb-plum) !important;
+  background-color: #EAF2F7 !important;
+  border: 1px solid rgba(18, 77, 120, 0.22) !important;
+  border-left: 2px solid var(--tb-signal) !important;
 }
 .light code,
 :root:not(.dark) code {
-  background-color: rgba(201, 152, 10, 0.08) !important;
-  border: 1px solid rgba(201, 152, 10, 0.2) !important;
-  color: var(--tb-gold-deep) !important;
+  background-color: rgba(41, 201, 232, 0.10) !important;
+  border: 1px solid rgba(24, 119, 210, 0.20) !important;
+  color: var(--tb-signal-deep) !important;
   padding: 0.1em 0.35em;
   border-radius: 3px;
 }
 
 /* ----------------------------------------------------------------
-   15. Horizontal rule — gold-leaf divider
+   15. Horizontal rule — waterline divider
    ---------------------------------------------------------------- */
 hr {
   border: none !important;
@@ -581,9 +508,9 @@ hr {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(201, 152, 10, 0.45) 22%,
-    rgba(124, 58, 237, 0.55) 50%,
-    rgba(201, 152, 10, 0.45) 78%,
+    rgba(41, 201, 232, 0.45) 22%,
+    rgba(24, 119, 210, 0.55) 50%,
+    rgba(41, 201, 232, 0.45) 78%,
     transparent 100%
   ) !important;
   position: relative;
@@ -593,150 +520,145 @@ hr {
 /* ----------------------------------------------------------------
    16. Links & selection
    ---------------------------------------------------------------- */
-.dark a:not([class*="button"]):not([class*="btn"]) { color: var(--tb-gold-warm); }
-.dark a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--tb-gold-pale); }
+.dark a:not([class*="button"]):not([class*="btn"]) { color: var(--tb-aqua); }
+.dark a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--tb-seafoam); }
 .light a:not([class*="button"]):not([class*="btn"]),
-:root:not(.dark) a:not([class*="button"]):not([class*="btn"]) { color: var(--tb-plum); }
+:root:not(.dark) a:not([class*="button"]):not([class*="btn"]) { color: var(--tb-signal); }
 .light a:hover:not([class*="button"]):not([class*="btn"]),
-:root:not(.dark) a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--tb-plum-deep); }
+:root:not(.dark) a:hover:not([class*="button"]):not([class*="btn"]) { color: var(--tb-signal-deep); }
 
-.dark ::selection { background: rgba(201, 152, 10, 0.35); color: #fff8e7; }
+.dark ::selection { background: rgba(41, 201, 232, 0.32); color: #F2FBFE; }
 .light ::selection,
-:root:not(.dark) ::selection { background: rgba(124, 58, 237, 0.22); color: var(--color-gray-950); }
+:root:not(.dark) ::selection { background: rgba(24, 119, 210, 0.22); color: var(--color-gray-950); }
 
 /* ----------------------------------------------------------------
-   17. Focus rings on inputs — candle flicker
+   17. Focus rings on inputs — beacon pulse
    ---------------------------------------------------------------- */
 .dark input:focus:not([type="checkbox"]):not([type="radio"]) {
   outline: none !important;
-  border-color: var(--tb-gold) !important;
-  box-shadow: 0 0 0 2px rgba(201, 152, 10, 0.25) !important;
+  border-color: var(--tb-aqua) !important;
+  box-shadow: 0 0 0 2px rgba(41, 201, 232, 0.25) !important;
 }
 .light input:focus:not([type="checkbox"]):not([type="radio"]),
 :root:not(.dark) input:focus:not([type="checkbox"]):not([type="radio"]) {
   outline: none !important;
-  border-color: var(--tb-plum) !important;
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important;
+  border-color: var(--tb-signal) !important;
+  box-shadow: 0 0 0 2px rgba(24, 119, 210, 0.20) !important;
 }
 
 /* ----------------------------------------------------------------
-   18. Scroll-to-bottom button — gold medallion
+   18. Scroll-to-bottom button — aqua buoy
    ---------------------------------------------------------------- */
 .dark button[aria-label*="scroll" i],
 .dark button[aria-label*="bottom" i] {
-  background: radial-gradient(circle at 30% 30%, #e8c66b, var(--tb-gold) 55%, var(--tb-gold-deep) 100%) !important;
-  color: var(--tb-ink) !important;
-  border: 1px solid rgba(232, 198, 107, 0.55) !important;
-  box-shadow: 0 4px 18px rgba(201, 152, 10, 0.4) !important;
+  background: radial-gradient(circle at 30% 30%, var(--tb-seafoam), var(--tb-aqua) 55%, var(--tb-signal) 100%) !important;
+  color: var(--tb-navy) !important;
+  border: 1px solid rgba(155, 230, 232, 0.55) !important;
+  box-shadow: 0 4px 18px rgba(41, 201, 232, 0.38) !important;
 }
 
 /* ----------------------------------------------------------------
    19. Splash / onboarding — logo glow
    ---------------------------------------------------------------- */
-html.dark #splash-screen { background: #060410 !important; }
-html:not(.dark) #splash-screen { background: #f5eeff !important; }
+html.dark #splash-screen { background: #040A14 !important; }
+html:not(.dark) #splash-screen { background: #F6FAFC !important; }
 #progress-bar {
-  background: linear-gradient(90deg, var(--tb-plum), var(--tb-gold-warm)) !important;
+  background: linear-gradient(90deg, var(--tb-signal), var(--tb-aqua)) !important;
 }
 html.dark #logo {
-  filter: drop-shadow(0 0 24px rgba(201, 152, 10, 0.55))
-          drop-shadow(0 0 8px rgba(124, 58, 237, 0.4)) !important;
+  filter: drop-shadow(0 0 24px rgba(41, 201, 232, 0.50))
+          drop-shadow(0 0 8px rgba(24, 119, 210, 0.40)) !important;
 }
 html:not(.dark) #logo {
-  filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.4))
-          drop-shadow(0 0 6px rgba(201, 152, 10, 0.25)) !important;
+  filter: drop-shadow(0 0 20px rgba(24, 119, 210, 0.35))
+          drop-shadow(0 0 6px rgba(41, 201, 232, 0.25)) !important;
 }
 
 /* ----------------------------------------------------------------
-   20. Auth / login — captain's ledger card
+   20. Auth / login — wheelhouse card
    ---------------------------------------------------------------- */
 .dark [class*="auth"] form,
 .dark [class*="login"] form {
   background: linear-gradient(
     180deg,
-    rgba(28, 22, 61, 0.88),
-    rgba(12, 9, 24, 0.94)
+    rgba(17, 40, 69, 0.88),
+    rgba(6, 13, 27, 0.94)
   ) !important;
-  border: 1px solid rgba(201, 152, 10, 0.28) !important;
+  border: 1px solid rgba(41, 201, 232, 0.25) !important;
   backdrop-filter: blur(8px);
   border-radius: 14px !important;
   padding: 2rem;
   box-shadow:
-    0 0 0 1px rgba(124, 58, 237, 0.18),
+    0 0 0 1px rgba(24, 119, 210, 0.18),
     0 28px 70px -20px rgba(0, 0, 0, 0.75),
-    inset 0 1px 0 rgba(232, 198, 107, 0.12) !important;
+    inset 0 1px 0 rgba(155, 230, 232, 0.12) !important;
 }
 
 /* ----------------------------------------------------------------
-   21. Placeholder text — aged ink
+   21. Placeholder text — pencil on chart paper
    ---------------------------------------------------------------- */
 .dark textarea::placeholder,
 .dark input::placeholder {
-  color: rgba(199, 188, 226, 0.4) !important;
-  font-style: italic;
-  font-family: 'EB Garamond', Georgia, serif !important;
+  color: rgba(155, 184, 206, 0.45) !important;
 }
 .light textarea::placeholder,
 .light input::placeholder,
 :root:not(.dark) textarea::placeholder,
 :root:not(.dark) input::placeholder {
-  color: rgba(97, 73, 176, 0.5) !important;
-  font-style: italic;
-  font-family: 'EB Garamond', Georgia, serif !important;
+  color: rgba(18, 77, 120, 0.50) !important;
 }
 
 /* ----------------------------------------------------------------
-   22. Tooltips — parchment
+   22. Tooltips — dark chart card
    ---------------------------------------------------------------- */
 .tippy-box {
-  background: linear-gradient(180deg, #1c163d 0%, #0c0918 100%) !important;
-  border: 1px solid rgba(201, 152, 10, 0.35) !important;
-  color: #ece6fa !important;
-  font-family: 'EB Garamond', Georgia, serif !important;
+  background: linear-gradient(180deg, #112845 0%, #081426 100%) !important;
+  border: 1px solid rgba(41, 201, 232, 0.35) !important;
+  color: #DCE9F2 !important;
   font-size: 0.92rem;
   letter-spacing: 0.01em;
   box-shadow:
-    0 0 0 1px rgba(124, 58, 237, 0.15),
+    0 0 0 1px rgba(24, 119, 210, 0.15),
     0 8px 24px rgba(0, 0, 0, 0.55) !important;
 }
-.tippy-box .tippy-arrow { color: #1c163d !important; }
+.tippy-box .tippy-arrow { color: #112845 !important; }
 
 /* ----------------------------------------------------------------
-   23. Avatars — gold ring on Tide-Bot
+   23. Avatars — aqua ring on Tide-Bot
    ---------------------------------------------------------------- */
 .dark [alt*="Tide" i],
 .dark img[alt*="assistant" i] {
   box-shadow:
-    0 0 0 1.5px rgba(201, 152, 10, 0.55),
-    0 0 14px rgba(201, 152, 10, 0.35) !important;
+    0 0 0 1.5px rgba(41, 201, 232, 0.55),
+    0 0 14px rgba(41, 201, 232, 0.32) !important;
   border-radius: 50% !important;
 }
 
 /* ----------------------------------------------------------------
-   24. Disable over-bright hover washes that fight the theme
+   24. Hover washes tuned to the water
    ---------------------------------------------------------------- */
 .dark [class*="hover:bg-gray-50"]:hover,
 .dark [class*="hover:bg-white"]:hover {
-  background-color: rgba(201, 152, 10, 0.10) !important;
-  color: var(--tb-gold-warm) !important;
+  background-color: rgba(41, 201, 232, 0.10) !important;
+  color: var(--tb-seafoam) !important;
 }
 
 .light [class*="hover:bg-gray-100"]:hover,
 :root:not(.dark) [class*="hover:bg-gray-100"]:hover {
-  background-color: rgba(124, 58, 237, 0.08) !important;
+  background-color: rgba(24, 119, 210, 0.08) !important;
 }
 
 /* ----------------------------------------------------------------
-   25. Destructive / warning — crimson ember
+   25. Destructive / warning — signal flare
    ---------------------------------------------------------------- */
 .dark button[class*="red"],
 .dark [class*="text-red"] {
-  color: #d47580 !important;
+  color: #E08894 !important;
 }
 .dark button.bg-red-500,
 .dark button.bg-red-600,
 .dark button.bg-red-700 {
-  background: linear-gradient(135deg, #a83645 0%, #8b2635 100%) !important;
-  color: #ffeaea !important;
-  border: 1px solid rgba(212, 117, 128, 0.4) !important;
+  background: linear-gradient(135deg, #C4485A 0%, var(--tb-ember) 100%) !important;
+  color: #FFEAEA !important;
+  border: 1px solid rgba(224, 136, 148, 0.4) !important;
 }

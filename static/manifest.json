@@ -4,8 +4,8 @@
   "description": "Tide-Bot - AI Chat Interface",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#343541",
-  "theme_color": "#171717",
+  "background_color": "#0B1B36",
+  "theme_color": "#0B1B36",
   "icons": [
     {
       "src": "/icon-192.png",
