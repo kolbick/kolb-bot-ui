@@ -309,41 +309,6 @@
 		].filter((part) => part.text);
 	};
 
-	const searchFilterPrefixes = ['tag:', 'folder:', 'pinned:', 'archived:', 'shared:'];
-
-	const getSnippetQuery = (query: string) => {
-		return query
-			.trim()
-			.split(/\s+/)
-			.filter(
-				(word) => !searchFilterPrefixes.some((prefix) => word.toLowerCase().startsWith(prefix))
-			)
-			.join(' ')
-			.trim();
-	};
-
-	const getHighlightedSnippet = (snippet: string, query: string) => {
-		const match = getSnippetQuery(query).toLowerCase();
-		const matchIndex = match ? snippet.toLowerCase().indexOf(match) : -1;
-
-		if (matchIndex === -1) {
-			return [{ text: snippet, highlight: false }];
-		}
-
-		const start = Math.max(matchIndex - 60, 0);
-		const end = Math.min(matchIndex + match.length + 80, snippet.length);
-		const visibleSnippet = `${start > 0 ? '...' : ''}${snippet.slice(start, end)}${
-			end < snippet.length ? '...' : ''
-		}`;
-		const index = visibleSnippet.toLowerCase().indexOf(match);
-
-		return [
-			{ text: visibleSnippet.slice(0, index), highlight: false },
-			{ text: visibleSnippet.slice(index, index + match.length), highlight: true },
-			{ text: visibleSnippet.slice(index + match.length), highlight: false }
-		].filter((part) => part.text);
-	};
-
 	$: if (!chatListLoading && chatList) {
 		loadChatPreview(selectedIdx);
 	}

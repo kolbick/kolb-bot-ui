@@ -27,9 +27,6 @@
 	/** Max height for the dropdown content */
 	export let maxHeight = '18rem';
 
-	/** Max height for the dropdown content */
-	export let maxHeight = '18rem';
-
 	/** CSS classes for each item button */
 	export let itemClass =
 		'flex h-[1.6875rem] w-full cursor-pointer items-center gap-2 rounded-xl bg-transparent px-2 text-[13px] hover:bg-gray-50/40 hover:text-gray-900 dark:hover:bg-gray-800/40 dark:hover:text-gray-100';
