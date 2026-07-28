@@ -4114,6 +4114,7 @@
 										}}
 									/>
 								</div>
+						</div>
 						{:else}
 							<div class="flex items-center h-full">
 								<Placeholder

@@ -658,7 +658,6 @@
 							/>
 						</AdminSettingField>
 					</div>
-				{/if}
 
 					<AdminSettingField
 						label={$i18n.t('Parameters')}

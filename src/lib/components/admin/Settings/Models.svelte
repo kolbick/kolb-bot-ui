@@ -62,8 +62,6 @@
 
 	type ModelListItem = { id: string; name?: string };
 
-	type ModelListItem = { id: string; name?: string };
-
 	let shiftKey = false;
 
 	export let tabState: Record<string, unknown> | null = null;
