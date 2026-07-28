@@ -309,10 +309,10 @@
 					} else {
 						return e.name;
 					}
-				}, '')} • Kolb-Bot</title
+				}, '')} / Open WebUI</title
 		>
 	{:else}
-		<title>#{channel?.name ?? 'Channel'} • Kolb-Bot</title>
+		<title>#{channel?.name ?? 'Channel'} / Open WebUI</title>
 	{/if}
 </svelte:head>
 
