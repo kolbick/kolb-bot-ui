@@ -245,7 +245,14 @@
 					</div>
 				{:else}
 					<div class="my-auto flex flex-col justify-center items-center">
-						<div id="auth-login-card" class=" sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
+						<div id="auth-login-card" class="auth-panel sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
+							<div class="flex justify-center mb-4">
+								<img
+									src="/logo-128.png"
+									class="size-24 drop-shadow-[0_2px_14px_rgba(232,198,107,0.4)]"
+									alt="{$WEBUI_NAME} mascot"
+								/>
+							</div>
 							{#if $config?.metadata?.auth_logo_position === 'center'}
 								<div class="flex justify-center mb-6">
 									<img
