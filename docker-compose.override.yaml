@@ -1,0 +1,9 @@
+services:
+  open-webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  ollama:
+    volumes:
+      - C:/Users/sshkolby/.ollama:/root/.ollama

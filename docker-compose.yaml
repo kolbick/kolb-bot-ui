@@ -3,30 +3,161 @@ services:
     volumes:
       - ollama:/root/.ollama
     container_name: ollama
-    pull_policy: always
+    gpus: all
+    pull_policy: if_not_present
     tty: true
     restart: unless-stopped
     image: ollama/ollama:${OLLAMA_DOCKER_TAG-latest}
+    ports:
+      - 127.0.0.1:11434:11434
 
   open-webui:
     build:
       context: .
       dockerfile: Dockerfile
     image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
+    pull_policy: if_not_present
     container_name: open-webui
     volumes:
       - open-webui:/app/backend/data
     depends_on:
       - ollama
+      - docling
     ports:
       - ${OPEN_WEBUI_PORT-3000}:8080
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:11434'
+      - 'OPENAI_API_BASE_URLS=https://api.minimax.io/v1'
+      - 'OPENAI_API_KEYS=${MINIMAX_API_KEY}'
       - 'WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}'
+      - 'CONTENT_EXTRACTION_ENGINE=docling'
+      - 'DOCLING_SERVER_URL=http://docling:5001'
+      - 'DOCLING_PARAMS={"do_ocr":true,"force_ocr":true,"pdf_backend":"dlparse_v4","table_mode":"accurate","ocr_engine":"tesseract","ocr_lang":["eng"]}'
     extra_hosts:
       - host.docker.internal:host-gateway
+    restart: unless-stopped
+
+  docling:
+    image: quay.io/docling-project/docling-serve:latest
+    container_name: docling
+    pull_policy: if_not_present
+    environment:
+      - DOCLING_SERVE_ENABLE_UI=true
+      - DOCLING_SERVE_ENABLE_REMOTE_SERVICES=true
+      - DOCLING_SERVE_MAX_SYNC_WAIT=600
+      - DOCLING_SERVE_ENG_LOC_NUM_WORKERS=2
+      - OMP_NUM_THREADS=4
+      - MKL_NUM_THREADS=4
+      - UVICORN_WORKERS=1
+    ports:
+      - ${DOCLING_PORT-5001}:5001
+    restart: unless-stopped
+
+  open-terminal-kolb:
+    build:
+      context: ./docker/open-terminal-kolb
+      dockerfile: Dockerfile
+    image: open-terminal-kolb:kolb-bot
+    container_name: open-terminal-kolb
+    hostname: kolb-bot-computer
+    pull_policy: if_not_present
+    command: run --host 0.0.0.0 --port 8000 --api-key ${OPEN_TERMINAL_API_KEY}
+    ports:
+      - ${OPEN_TERMINAL_KOLB_PORT-8001}:8000
+      - ${OPEN_TERMINAL_KOLB_SSH_PORT-2222}:22
+    environment:
+      - OPEN_TERMINAL_API_KEY=${OPEN_TERMINAL_API_KEY}
+      - KOLB_BOT_PASSWORD=${KOLB_BOT_PASSWORD}
+      - API_SERVER_ENABLED=true
+      - API_SERVER_HOST=0.0.0.0
+      - API_SERVER_PORT=8642
+      - API_SERVER_MODEL_NAME=Kolb-Bot
+      - API_SERVER_KEY=${API_SERVER_KEY}
+    volumes:
+      - kolb-bot-computer:/home/Kolb-Bot
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)\"",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  open-terminal-abby:
+    image: ghcr.io/open-webui/open-terminal:latest
+    container_name: open-terminal-abby
+    pull_policy: if_not_present
+    # Wrapper (stored in the home volume) starts the Abby-Bot Hermes agent
+    # gateway on :8642 before handing off to the stock entrypoint.
+    entrypoint: ["/usr/bin/tini", "--", "/home/user/.hermes/container-entrypoint.sh"]
+    command: run --host 0.0.0.0 --port 8000 --api-key ${OPEN_TERMINAL_API_KEY}
+    ports:
+      - ${OPEN_TERMINAL_ABBY_PORT-8002}:8000
+    environment:
+      - OPEN_TERMINAL_API_KEY=${OPEN_TERMINAL_API_KEY}
+    volumes:
+      - abby-bot-computer:/home/user
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)\"",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  comfyui:
+    image: yanwk/comfyui-boot:cu130-slim-v2
+    container_name: comfyui
+    pull_policy: if_not_present
+    gpus: all
+    environment:
+      - CLI_ARGS=--listen 0.0.0.0 --port 8188 --lowvram
+    volumes:
+      - C:/Users/sshkolby/comfyui-data/models:/root/ComfyUI/models
+      - C:/Users/sshkolby/comfyui-data/output:/root/ComfyUI/output
+      - C:/Users/sshkolby/comfyui-data/input:/root/ComfyUI/input
+      - C:/Users/sshkolby/comfyui-data/custom_nodes:/root/ComfyUI/custom_nodes
+      - C:/Users/sshkolby/comfyui-data/user:/root/ComfyUI/user
+    # No host port mapping â€” open-webui reaches it at http://comfyui:8188 over
+    # the shared open-webui_default network. Add a `ports:` entry to expose
+    # the ComfyUI web UI to the host if you ever need to manage it directly.
+    restart: unless-stopped
+
+  minimax-image-mcpo:
+    image: ghcr.io/open-webui/mcpo:main
+    container_name: minimax-image-mcpo
+    pull_policy: if_not_present
+    command:
+      [
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--",
+        "uvx",
+        "minimax-coding-plan-mcp",
+        "-y",
+      ]
+    environment:
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY}
+      - MINIMAX_API_HOST=https://api.minimax.io
+      - MINIMAX_MCP_BASE_PATH=/tmp/minimax-mcp
     restart: unless-stopped
 
 volumes:
   ollama: {}
   open-webui: {}
+  kolb-bot-computer: {}
+  abby-bot-computer: {}
+
+networks:
+  comfyui_default:
+    external: true
