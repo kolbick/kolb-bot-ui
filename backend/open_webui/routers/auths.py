@@ -152,14 +152,6 @@ LDAP_SERVER_CONFIG_KEYS = {
 }
 
 
-async def get_config_values(key_map: dict[str, str]) -> dict:
-    values = await Config.get_many(*key_map.values())
-    return {field: values[storage_key] for field, storage_key in key_map.items() if storage_key in values}
-
-
-def config_updates(data: dict, key_map: dict[str, str]) -> dict:
-    return {key_map[field]: value for field, value in data.items() if field in key_map}
-
 ADMIN_CONFIG_KEYS = {
     'SHOW_ADMIN_DETAILS': 'auth.admin.show',
     'ADMIN_EMAIL': 'auth.admin.email',

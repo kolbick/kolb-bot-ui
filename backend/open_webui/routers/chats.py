@@ -1086,19 +1086,6 @@ async def get_archived_session_user_chat_count(
 
 
 ############################
-# GetArchivedChatsCount
-############################
-
-
-@router.get('/archived/count', response_model=int)
-async def get_archived_session_user_chat_count(
-    user=Depends(get_verified_user),
-    db: AsyncSession = Depends(get_async_session),
-):
-    return await Chats.count_archived_chats_by_user_id(user.id, db=db)
-
-
-############################
 # ArchiveAllChats
 ############################
 
@@ -1299,58 +1286,6 @@ async def compact_chat_by_id(
 
     result = await compact_chat_branch(request, user, chat, model_id, request.app.state.MODELS)
     result['context_usage'] = await get_chat_context_usage(chat, model_id)
-    if result.get('compacted'):
-        await publish_event(
-            request,
-            EVENTS.CHAT_COMPACTED,
-            actor=user,
-            subject_id=id,
-            data={'dropped_messages': result.get('dropped_messages')},
-        )
-    return result
-
-
-############################
-# CompactChat
-############################
-
-
-@router.post('/{id}/compact')
-async def compact_chat_by_id(
-    request: Request,
-    id: str,
-    form_data: CompactChatForm | None = None,
-    user=Depends(get_verified_user),
-    db: AsyncSession = Depends(get_async_session),
-):
-    chat = await Chats.get_chat_by_id_and_user_id(id, user.id, db=db)
-    if not chat:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=ERROR_MESSAGES.NOT_FOUND)
-
-    if await has_active_tasks(request.app.state.redis, id):
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail='Wait for the current response to finish before compacting.',
-        )
-
-    if not request.app.state.MODELS:
-        await get_all_models(request, user=user)
-
-    history = (chat.chat or {}).get('history') or {}
-    messages_map = await Chats.get_messages_map_by_chat_id(id)
-    message_list = get_message_list(messages_map or history.get('messages') or {}, history.get('currentId'))
-    model_id = (form_data.model if form_data else None) or next(
-        (message.get('model') for message in reversed(message_list) if message.get('model')),
-        None,
-    )
-
-    if not model_id:
-        chat_models = (chat.chat or {}).get('models') or []
-        model_id = chat_models[0] if chat_models else None
-    if not model_id:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='No model found for context compaction.')
-
-    result = await compact_chat_branch(request, user, chat, model_id, request.app.state.MODELS)
     if result.get('compacted'):
         await publish_event(
             request,

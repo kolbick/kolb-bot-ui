@@ -77,20 +77,6 @@ class SharedFolderResponse(BaseModel):
     updated_at: int
 
 
-class SharedFolderResponse(BaseModel):
-    id: str
-    name: str
-    parent_id: Optional[str] = None
-    user_id: str
-    owner_name: Optional[str] = None
-    permission: str = 'read'
-    access_grants: list = []
-    is_expanded: bool = False
-    meta: Optional[dict] = None
-    created_at: int
-    updated_at: int
-
-
 ####################
 # Forms
 ####################

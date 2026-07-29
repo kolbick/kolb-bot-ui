@@ -111,8 +111,6 @@
 
 		setTextScale($settings?.textScale ?? 1);
 
-		setTextScale($settings?.textScale ?? 1);
-
 		if (cb) {
 			await cb();
 		}
