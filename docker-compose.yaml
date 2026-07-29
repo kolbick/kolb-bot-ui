@@ -35,7 +35,7 @@ services:
       - 'DOCLING_PARAMS={"do_ocr":true,"force_ocr":true,"pdf_backend":"dlparse_v4","table_mode":"accurate","ocr_engine":"tesseract","ocr_lang":["eng"]}'
       - 'GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
       - 'GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
-      - 'GOOGLE_REDIRECT_URI=https://kolb-bot.com/oauth/google/callback'
+      - 'GOOGLE_REDIRECT_URI=https://kolb-bot.com/oauth/google/login/callback'
       - 'GOOGLE_OAUTH_SCOPE=openid email profile'
       - 'GOOGLE_OAUTH_AUTHORIZE_PARAMS={"prompt":"select_account"}'
       - 'ENABLE_OAUTH_SIGNUP=true'
