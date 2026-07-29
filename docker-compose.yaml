@@ -38,7 +38,8 @@ services:
       - 'GOOGLE_REDIRECT_URI=https://kolb-bot.com/oauth/google/login/callback'
       - 'GOOGLE_OAUTH_SCOPE=openid email profile'
       - 'GOOGLE_OAUTH_AUTHORIZE_PARAMS={"prompt":"select_account"}'
-      - 'ENABLE_OAUTH_SIGNUP=true'
+      - 'ENABLE_OAUTH_SIGNUP=false'
+      - 'OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true'
       - 'ENABLE_OAUTH_BACKCHANNEL_LOGOUT=true'
     extra_hosts:
       - host.docker.internal:host-gateway
