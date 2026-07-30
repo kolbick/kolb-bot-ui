@@ -246,24 +246,13 @@
 				{:else}
 					<div class="my-auto flex flex-col justify-center items-center">
 						<div id="auth-login-card" class="auth-panel sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
-							<div class="flex justify-center mb-4">
+							<div class="auth-logo-wrap flex justify-center mb-5">
 								<img
-									src="/logo-128.png"
-									class="size-24 drop-shadow-[0_2px_14px_rgba(232,198,107,0.4)]"
+									src="/logo-auth.png"
+									class="auth-logo"
 									alt="{$WEBUI_NAME} mascot"
 								/>
 							</div>
-							{#if $config?.metadata?.auth_logo_position === 'center'}
-								<div class="flex justify-center mb-6">
-									<img
-										id="logo"
-										crossorigin="anonymous"
-										src="/logo-512.png"
-										class="size-28 rounded-3xl border border-amber-300/35 shadow-2xl shadow-purple-900/60 bg-purple-950/40 p-2"
-										alt="{$WEBUI_NAME} logo"
-									/>
-								</div>
-							{/if}
 							<form
 								class=" flex flex-col justify-center"
 								on:submit={(e) => {
@@ -272,7 +261,7 @@
 								}}
 							>
 								<div class="mb-1">
-									<div class=" text-2xl font-normal">
+									<div class="auth-title text-2xl font-normal">
 										{#if $config?.onboarding ?? false}
 											{$i18n.t(`Get started with {{WEBUI_NAME}}`, { WEBUI_NAME: $WEBUI_NAME })}
 										{:else if mode === 'ldap'}
@@ -305,7 +294,7 @@
 													bind:value={name}
 													type="text"
 													id="name"
-													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-amber-200/40"
+													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent"
 													autocomplete="name"
 													placeholder={$i18n.t('Enter Your Full Name')}
 													required
@@ -321,7 +310,7 @@
 												<input
 													bind:value={ldapUsername}
 													type="text"
-													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-amber-200/40"
+													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent"
 													autocomplete="username"
 													name="username"
 													id="username"
@@ -338,7 +327,7 @@
 													bind:value={email}
 													type="email"
 													id="email"
-													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-amber-200/40"
+													class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent"
 													autocomplete="email"
 													name="email"
 													placeholder={$i18n.t('Enter Your Email')}
@@ -355,7 +344,7 @@
 												bind:value={password}
 												type="password"
 												id="password"
-												class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent placeholder:text-amber-200/40"
+												class="auth-input my-0.5 w-full text-sm outline-hidden bg-transparent"
 												placeholder={$i18n.t('Enter Your Password')}
 												autocomplete={mode === 'signup' ? 'new-password' : 'current-password'}
 												name="password"
@@ -424,7 +413,7 @@
 											</button>
 
 											{#if $config?.features.enable_signup && !($config?.onboarding ?? false)}
-												<div class="mt-4 text-sm text-center text-amber-100/85">
+												<div class="auth-secondary-copy mt-4 text-sm text-center">
 													{mode === 'signin'
 														? $i18n.t("Don't have an account?")
 														: $i18n.t('Already have an account?')}
@@ -451,17 +440,16 @@
 
 							{#if Object.keys($config?.oauth?.providers ?? {}).length > 0}
 								<div class="inline-flex items-center justify-center w-full">
-									<hr class="w-32 h-px my-4 border-0 bg-amber-300/20" />
+									<hr class="auth-divider-line w-32 h-px my-4 border-0" />
 									{#if $config?.features.enable_login_form || $config?.features.enable_ldap || form}
-										<span
-											class="px-3 text-sm font-normal text-gray-900 dark:text-white bg-transparent"
+										<span class="auth-divider-label px-3 text-sm font-normal bg-transparent"
 											>{$i18n.t('or')}</span
 										>
 									{/if}
 
-									<hr class="w-32 h-px my-4 border-0 bg-amber-300/20" />
+									<hr class="auth-divider-line w-32 h-px my-4 border-0" />
 								</div>
-								<div class="flex flex-col space-y-2">
+								<div class="auth-provider-list flex flex-col space-y-2">
 									{#if $config?.oauth?.providers?.google}
 										<button
 											class="flex justify-center items-center bg-gray-700/5 hover:bg-gray-700/10 dark:bg-gray-100/5 dark:hover:bg-gray-100/10 dark:text-gray-300 dark:hover:text-white transition w-full rounded-full font-normal text-sm py-2.5"
@@ -590,7 +578,7 @@
 							{#if $config?.features.enable_ldap && $config?.features.enable_login_form}
 								<div class="mt-2">
 									<button
-										class="flex justify-center items-center text-xs w-full text-center underline text-amber-300 hover:text-amber-200 transition-colors"
+										class="auth-link flex justify-center items-center text-xs w-full text-center underline transition-colors"
 										type="button"
 										on:click={() => {
 											if (mode === 'ldap')
@@ -609,7 +597,7 @@
 						</div>
 						{#if $config?.metadata?.login_footer}
 							<div class="max-w-3xl mx-auto">
-								<div class="mt-2 text-[0.7rem] text-amber-100/60 marked">
+								<div class="auth-footer mt-2 text-[0.7rem] marked">
 									{@html DOMPurify.sanitize(marked($config?.metadata?.login_footer))}
 								</div>
 							</div>
@@ -619,34 +607,19 @@
 			</div>
 		</div>
 
-		{#if !$config?.metadata?.auth_logo_position}
-			<div class="fixed m-10 z-50">
-				<div class="flex space-x-2">
-					<div class=" self-center">
-						<img
-							id="logo"
-							crossorigin="anonymous"
-							src="/logo-128.png"
-							class="w-8 rounded-xl border border-amber-300/35 bg-purple-950/40 p-1"
-							alt=""
-						/>
-					</div>
-				</div>
-			</div>
-		{/if}
 	{/if}
 </div>
 
 <style>
 	#auth-page {
 		background:
-			radial-gradient(circle at 15% 20%, rgba(232, 121, 249, 0.26), transparent 40%),
-			radial-gradient(circle at 75% 8%, rgba(250, 204, 21, 0.18), transparent 35%),
-			linear-gradient(145deg, #140020 0%, #23043e 48%, #18012a 100%);
+			radial-gradient(circle at 14% 18%, rgba(196, 181, 253, 0.78), transparent 38%),
+			radial-gradient(circle at 82% 8%, rgba(253, 230, 138, 0.7), transparent 34%),
+			linear-gradient(145deg, #fcfaff 0%, #eee7ff 52%, #fff9e8 100%);
 	}
 
 	.auth-backdrop {
-		background: radial-gradient(circle at 50% 100%, rgba(56, 16, 85, 0.65), transparent 48%);
+		background: radial-gradient(circle at 50% 100%, rgba(124, 58, 237, 0.12), transparent 48%);
 	}
 
 	.auth-glow {
@@ -654,73 +627,124 @@
 		width: 22rem;
 		height: 22rem;
 		border-radius: 9999px;
-		filter: blur(48px);
-		opacity: 0.28;
+		filter: blur(56px);
+		opacity: 0.22;
 	}
 
 	.auth-glow-top {
 		top: -6rem;
 		right: -4rem;
-		background: #facc15;
+		background: #fbbf24;
 	}
 
 	.auth-glow-bottom {
 		bottom: -7rem;
 		left: -5rem;
-		background: #a855f7;
-	}
-
-	.auth-button {
-		border: 1px solid rgba(250, 204, 21, 0.32);
-	}
-
-	.auth-button-primary {
-		background: linear-gradient(120deg, rgba(147, 51, 234, 0.9), rgba(126, 34, 206, 0.9));
-		color: #fde68a;
-		box-shadow: 0 8px 28px rgba(15, 23, 42, 0.35);
-	}
-
-	.auth-button-primary:hover {
-		background: linear-gradient(120deg, rgba(168, 85, 247, 0.95), rgba(147, 51, 234, 0.95));
-		color: #fef08a;
-	}
-
-	.auth-button-secondary {
-		background: rgba(31, 18, 52, 0.45);
-		color: #f8fafc;
+		background: #8b5cf6;
 	}
 
 	.auth-panel {
-		background: rgba(26, 18, 48, 0.7);
-		border: 1px solid rgba(232, 198, 107, 0.28);
+		background: rgba(255, 255, 255, 0.94);
+		border: 1px solid rgba(109, 40, 217, 0.2);
+		color: #2d1b45;
 		border-radius: 1.25rem;
 		padding: 2rem 2.25rem;
-		backdrop-filter: blur(12px);
+		backdrop-filter: blur(14px);
 		box-shadow:
-			0 0 0 1px rgba(124, 58, 237, 0.18),
-			0 28px 70px -22px rgba(0, 0, 0, 0.75),
-			inset 0 1px 0 rgba(232, 198, 107, 0.12);
+			0 0 0 1px rgba(255, 255, 255, 0.7),
+			0 28px 70px -28px rgba(76, 29, 149, 0.42),
+			inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	}
+
+	.auth-logo-wrap {
+		min-height: 8.5rem;
+		align-items: center;
+	}
+
+	.auth-logo {
+		width: auto;
+		height: clamp(8rem, 26vw, 9.5rem);
+		max-width: 100%;
+		object-fit: contain;
+		filter: drop-shadow(0 8px 16px rgba(76, 29, 149, 0.22));
 	}
 
 	.auth-title {
-		color: #e8c66b;
+		color: #5b21b6;
 		letter-spacing: 0.01em;
 	}
 
 	:global(.auth-input) {
-		border-bottom: 1px solid rgba(232, 198, 107, 0.28);
+		border-bottom: 1px solid rgba(109, 40, 217, 0.32);
 		border-radius: 0;
 		padding-bottom: 0.35rem;
-		color: #f5f0ff;
+		color: #241238;
 		transition: border-color 0.15s ease-out;
 	}
 
-	:global(.auth-input:focus) {
-		border-bottom-color: #e8c66b;
+	:global(.auth-input::placeholder) {
+		color: #6b5a7c !important;
+		opacity: 1;
 	}
 
-	.auth-button-secondary:hover {
-		background: rgba(68, 34, 116, 0.6);
-		color: #fef3c7;
+	:global(.auth-input:focus) {
+		border-bottom-color: #6d28d9;
+	}
+
+	.auth-panel :global(button) {
+		color: #2d1b45;
+	}
+
+	.auth-panel :global(button[type='submit']) {
+		background: linear-gradient(120deg, #6d28d9, #7c3aed);
+		border: 1px solid #5b21b6;
+		color: #ffffff;
+		box-shadow: 0 8px 20px -10px rgba(76, 29, 149, 0.8);
+	}
+
+	.auth-panel :global(button[type='submit']:hover) {
+		background: linear-gradient(120deg, #5b21b6, #6d28d9);
+		color: #ffffff;
+	}
+
+	.auth-provider-list :global(button) {
+		background: #ffffff;
+		border: 1px solid #c4b5fd;
+		color: #2d1b45;
+		box-shadow: 0 4px 14px -10px rgba(76, 29, 149, 0.6);
+	}
+
+	.auth-provider-list :global(button:hover) {
+		background: #f5f3ff;
+		border-color: #8b5cf6;
+		color: #241238;
+	}
+
+	.auth-secondary-copy,
+	.auth-divider-label,
+	.auth-footer {
+		color: #4c3b5f;
+	}
+
+	.auth-divider-line {
+		background: rgba(109, 40, 217, 0.24);
+	}
+
+	.auth-link {
+		color: #5b21b6 !important;
+	}
+
+	.auth-link:hover {
+		color: #4c1d95 !important;
+	}
+
+	@media (max-width: 639px) {
+		.auth-panel {
+			padding: 1.5rem 1.4rem;
+		}
+
+		.auth-logo-wrap {
+			min-height: 7.5rem;
+		}
 	}
 </style>
