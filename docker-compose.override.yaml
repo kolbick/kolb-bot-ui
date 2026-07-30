@@ -7,3 +7,16 @@ services:
   ollama:
     volumes:
       - C:/Users/sshkolby/.ollama:/root/.ollama
+
+  # cptr 0.9.15's trusted-header mode does not bootstrap the cookie expected
+  # by its frontend and per-route helpers. Apply the scoped compatibility fix
+  # before startup so Cloudflare's verified Google email becomes that session.
+  cptr-kolb:
+    volumes:
+      - ./docker/cptr-fix:/patch:ro
+    command: ["sh", "-c", "sh /patch/apply-patch.sh run --host 0.0.0.0 --port 8000 --headless"]
+
+  cptr-abby:
+    volumes:
+      - ./docker/cptr-fix:/patch:ro
+    command: ["sh", "-c", "sh /patch/apply-patch.sh run --host 0.0.0.0 --port 8000 --headless"]

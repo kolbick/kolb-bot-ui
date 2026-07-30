@@ -126,13 +126,12 @@ services:
     container_name: cptr-kolb
     hostname: cptr-kolb
     pull_policy: if_not_present
-    # No host bind-mounts by design: this workspace is isolated from the
-    # rest of the machine, with its own volume and its own sandboxed
-    # terminal for code execution. Visit the local port once after first
-    # boot to complete setup and generate an API key, then add it as a
-    # Connection in Open WebUI's Admin Settings.
+    # Workspace data remains isolated in named volumes. The loopback-only
+    # service is published through Cloudflare Access, whose verified Google
+    # email bootstraps the local cptr session via the override compatibility fix.
     ports:
-      - ${CPTR_KOLB_PORT-8003}:8000
+      # Loopback-only: cptr trusts the Cloudflare Access email header.
+      - 127.0.0.1:${CPTR_KOLB_PORT-8003}:8000
     volumes:
       - cptr-kolb-data:/data
       - cptr-kolb-workspace:/workspace
@@ -143,10 +142,11 @@ services:
     container_name: cptr-abby
     hostname: cptr-abby
     pull_policy: if_not_present
-    # Isolated from cptr-kolb and from the host the same way -- its own
-    # volume, no bind-mounts.
+    # Isolated from cptr-kolb with its own data and workspace volumes; it uses
+    # the same Cloudflare Access trusted-email session bootstrap.
     ports:
-      - ${CPTR_ABBY_PORT-8004}:8000
+      # Loopback-only: cptr trusts the Cloudflare Access email header.
+      - 127.0.0.1:${CPTR_ABBY_PORT-8004}:8000
     volumes:
       - cptr-abby-data:/data
       - cptr-abby-workspace:/workspace
