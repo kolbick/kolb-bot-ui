@@ -432,25 +432,50 @@
 			return new Promise((resolve) => {
 				const audioElement = document.getElementById('audioElement') as HTMLAudioElement;
 
-				if (audioElement) {
-					audioElement.src = audio.src;
-					audioElement.muted = true;
-					audioElement.playbackRate = $settings.audio?.tts?.playbackRate ?? 1;
-
-					audioElement
-						.play()
-						.then(() => {
-							audioElement.muted = false;
-						})
-						.catch((error) => {
-							console.error(error);
-						});
-
-					audioElement.onended = async (e) => {
-						await new Promise((r) => setTimeout(r, 100));
-						resolve(e);
-					};
+				if (!audioElement) {
+					resolve(null);
+					return;
 				}
+
+				// Resolve exactly once, whatever happens. Waiting only on "ended" stalls
+				// the whole sentence queue when playback never starts at all.
+				let settled = false;
+				const finish = (result) => {
+					if (settled) {
+						return;
+					}
+					settled = true;
+					resolve(result);
+				};
+
+				audioElement.src = audio.src;
+				// Deliberately unmuted: starting muted and unmuting from the play()
+				// promise loses the race on iOS, which plays the clip through silently.
+				audioElement.muted = false;
+				audioElement.playbackRate = $settings.audio?.tts?.playbackRate ?? 1;
+
+				audioElement.onended = async (e) => {
+					await new Promise((r) => setTimeout(r, 100));
+					finish(e);
+				};
+				audioElement.onerror = (e) => {
+					console.error('Audio playback error:', e);
+					toast.error(
+						`${$i18n.t('Voice playback failed')}: ${audioElement.error?.code ?? '?'} ${audioElement.error?.message ?? ''}`
+					);
+					finish(e);
+				};
+
+				audioElement.play().catch((error) => {
+					// Surfaced on screen, not just the console: on iOS the console is
+					// unreachable, and a blocked play() is otherwise indistinguishable
+					// from audio that played at an inaudible volume.
+					console.error(error);
+					toast.error(
+						`${$i18n.t('Voice playback blocked')}: ${error?.name ?? ''} ${error?.message ?? error}`
+					);
+					finish(error);
+				});
 			});
 		} else {
 			return Promise.resolve();

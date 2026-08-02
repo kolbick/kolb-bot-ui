@@ -41,6 +41,11 @@ services:
       - 'ENABLE_OAUTH_SIGNUP=false'
       - 'OAUTH_MERGE_ACCOUNTS_BY_EMAIL=true'
       - 'ENABLE_OAUTH_BACKCHANNEL_LOGOUT=true'
+      # Let the ElevenLabs voice agents search the web like typed chat does.
+      # Only viable with "Bypass Web Loader" on in Admin Settings > Web Search:
+      # scraping full pages instead of using snippets costs ~7s per query, and
+      # ElevenLabs hard-caps its LLM wait at 15s, so calls drop mid-conversation.
+      - 'OPEN_WEBUI_VOICE_WEB_SEARCH=true'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped

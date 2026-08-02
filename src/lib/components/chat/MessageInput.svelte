@@ -16,6 +16,7 @@
 	import { createPicker, getAuthToken } from '$lib/utils/google-drive-picker';
 	import { pickAndDownloadFile } from '$lib/utils/onedrive-file-picker';
 	import { KokoroWorker } from '$lib/workers/KokoroWorker';
+	import { startVoiceAgent, endVoiceAgent, voiceAgentActive } from '$lib/utils/voice-agent';
 
 	const dispatch = createEventDispatcher();
 
@@ -2333,63 +2334,59 @@
 										{#if prompt === '' && files.length === 0 && ($_user?.role === 'admin' || ($_user?.permissions?.chat?.call ?? true))}
 											<div class=" flex items-center">
 												<!-- {$i18n.t('Call')} -->
-												<Tooltip content={$i18n.t('Voice mode')}>
+												<Tooltip
+													content={$voiceAgentActive
+														? $i18n.t('End voice mode')
+														: $i18n.t('Voice mode')}
+												>
 													<button
-														class=" bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full p-[5px] self-center"
+														class={$voiceAgentActive
+															? ' bg-red-600 text-white hover:bg-red-700 transition rounded-full p-[5px] self-center'
+															: ' bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full p-[5px] self-center'}
 														type="button"
 														on:click={async () => {
-															if (selectedModels.length > 1) {
-																toast.error($i18n.t('Select only one model to call'));
-
+															// Voice runs through the ElevenLabs Agents SDK directly (not an
+															// embedded widget), which streams speech both ways and handles
+															// its own transcription, so none of the local STT/TTS setup
+															// below is used for this path.
+															if ($voiceAgentActive) {
+																await endVoiceAgent();
 																return;
 															}
 
-															if ($config.audio.stt.engine === 'web') {
-																toast.error(
-																	$i18n.t('Call feature is not supported when using Web STT engine')
-																);
-
-																return;
-															}
-															// check if user has access to getUserMedia
 															try {
-																let stream = await navigator.mediaDevices.getUserMedia({
+																// Prompt for the mic up front: asking here, on the tap, gives a
+																// clearer failure than letting the SDK fail after it connects.
+																const stream = await navigator.mediaDevices.getUserMedia({
 																	audio: true
 																});
-																// If the user grants the permission, proceed to show the call overlay
-
-																if (stream) {
-																	const tracks = stream.getTracks();
-																	tracks.forEach((track) => track.stop());
-																}
-
-																stream = null;
-
-																if ($settings.audio?.tts?.engine === 'browser-kokoro') {
-																	// If the user has not initialized the TTS worker, initialize it
-																	if (!$TTSWorker) {
-																		await TTSWorker.set(
-																			new KokoroWorker({
-																				dtype: $settings.audio?.tts?.engineConfig?.dtype ?? 'fp32'
-																			})
-																		);
-
-																		await $TTSWorker.init();
-																	}
-																}
-
-																showCallOverlay.set(true);
-																showControls.set(true);
+																stream.getTracks().forEach((track) => track.stop());
 															} catch (err) {
-																// If the user denies the permission or an error occurs, show an error message
 																toast.error(
 																	$i18n.t('Permission denied when accessing media devices')
 																);
+																return;
+															}
+
+															try {
+																await startVoiceAgent(selectedModelIds?.[0]);
+															} catch (err) {
+																toast.error(
+																	$i18n.t('Failed to start voice agent: {{error}}', {
+																		error: err?.message ?? err
+																	})
+																);
 															}
 														}}
-														aria-label={$i18n.t('Voice mode')}
+														aria-label={$voiceAgentActive
+															? $i18n.t('End voice mode')
+															: $i18n.t('Voice mode')}
 													>
-														<Voice className="size-5" strokeWidth="2.5" />
+														{#if $voiceAgentActive}
+															<XMark className="size-5" strokeWidth="2.5" />
+														{:else}
+															<Voice className="size-5" strokeWidth="2.5" />
+														{/if}
 													</button>
 												</Tooltip>
 											</div>

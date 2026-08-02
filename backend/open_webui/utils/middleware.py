@@ -193,6 +193,146 @@ DEFAULT_SOLUTION_TAGS = [('<|begin_of_solution|>', '<|end_of_solution|>')]
 DEFAULT_CODE_INTERPRETER_TAGS = [('<code_interpreter>', '</code_interpreter>')]
 
 
+class _ReasoningStripper:
+    """Remove reasoning spans from an OpenAI-style SSE stream, chunk by chunk.
+
+    Used only for voice callers on the external-API passthrough path, where the
+    UI's reasoning parsing never runs and a stray <think> block would otherwise
+    be spoken aloud. Tags routinely straddle chunk boundaries, so partial text
+    that could still turn into a tag is held back rather than emitted.
+    """
+
+    def __init__(self, tags=None):
+        self.tags = tags or DEFAULT_REASONING_TAGS
+        self.buffer = ''
+        self.end_tag = None
+
+    @staticmethod
+    def _held_suffix_len(text: str, candidates) -> int:
+        """Length of the longest text suffix that could still become a tag."""
+        for size in range(min(len(text), max(len(c) for c in candidates) - 1), 0, -1):
+            suffix = text[-size:]
+            if any(c.startswith(suffix) for c in candidates):
+                return size
+        return 0
+
+    def strip(self, text: str) -> str:
+        self.buffer += text
+        visible = []
+
+        while True:
+            if self.end_tag is None:
+                # Closing tags count as openers too. Providers that stream the
+                # reasoning itself in a separate field (OpenRouter's `reasoning`)
+                # still emit the bare closing tag into content, so a lone
+                # "</think>" arrives with nothing opening it — spoken aloud that
+                # is a literal "slash think". Treat it as a no-op delimiter.
+                starts = [pair[0] for pair in self.tags] + [pair[1] for pair in self.tags]
+                found_at, found_open, found_close = -1, None, None
+                for start, end in self.tags:
+                    for tag, is_open in ((start, True), (end, False)):
+                        at = self.buffer.find(tag)
+                        if at != -1 and (found_at == -1 or at < found_at):
+                            found_at = at
+                            found_open = tag if is_open else None
+                            found_close = None if is_open else tag
+
+                if found_at != -1:
+                    matched = found_open or found_close
+                    visible.append(self.buffer[:found_at])
+                    self.buffer = self.buffer[found_at + len(matched) :]
+                    # An opener starts a reasoning span; a stray closer just
+                    # gets dropped and normal text continues after it.
+                    self.end_tag = dict(self.tags)[found_open] if found_open else None
+                    continue
+
+                hold = self._held_suffix_len(self.buffer, starts)
+                emit_to = len(self.buffer) - hold
+                visible.append(self.buffer[:emit_to])
+                self.buffer = self.buffer[emit_to:]
+                break
+
+            at = self.buffer.find(self.end_tag)
+            if at != -1:
+                self.buffer = self.buffer[at + len(self.end_tag) :]
+                self.end_tag = None
+                continue
+
+            hold = self._held_suffix_len(self.buffer, [self.end_tag])
+            self.buffer = self.buffer[len(self.buffer) - hold :] if hold else ''
+            break
+
+        return ''.join(visible)
+
+    def filter_sse(self, data):
+        """Rewrite one SSE payload. Returns None when nothing is left to send."""
+        raw = data
+        is_bytes = isinstance(raw, (bytes, bytearray))
+        if is_bytes:
+            try:
+                raw = raw.decode('utf-8')
+            except UnicodeDecodeError:
+                return data
+
+        if 'data:' not in raw:
+            return data
+
+        out_lines = []
+        emitted_content = False
+        had_content = False
+
+        for line in raw.split('\n'):
+            stripped = line.strip()
+            if not stripped.startswith('data:'):
+                out_lines.append(line)
+                continue
+
+            payload = stripped[5:].strip()
+            if not payload or payload == '[DONE]':
+                out_lines.append(line)
+                continue
+
+            try:
+                event = json.loads(payload)
+            except Exception:
+                out_lines.append(line)
+                continue
+
+            changed = False
+            for choice in event.get('choices') or []:
+                delta = choice.get('delta')
+                if not isinstance(delta, dict):
+                    continue
+                # Some providers stream reasoning in a dedicated field rather than
+                # inline tags (OpenRouter uses `reasoning`, others
+                # `reasoning_content`); for voice it is noise either way.
+                for reasoning_field in ('reasoning', 'reasoning_content'):
+                    if delta.pop(reasoning_field, None) is not None:
+                        changed = True
+                content = delta.get('content')
+                if not isinstance(content, str) or content == '':
+                    continue
+                had_content = True
+                visible = self.strip(content)
+                if visible != content:
+                    delta['content'] = visible
+                    changed = True
+                if visible:
+                    emitted_content = True
+
+            out_lines.append(f'data: {json.dumps(event)}' if changed else line)
+
+        # A chunk that carried only reasoning text becomes an empty delta; drop it
+        # rather than emitting a no-op, but never drop chunks doing anything else.
+        if had_content and not emitted_content:
+            meaningful = any(key in raw for key in ('finish_reason', 'tool_calls', 'usage', '[DONE]'))
+            if not meaningful:
+                return None
+
+        result = '\n'.join(out_lines)
+        return result.encode('utf-8') if is_bytes else result
+
+
 def _start_tag_pattern(start_tag: str) -> str:
     if start_tag.startswith('<') and start_tag.endswith('>'):
         return rf'<{re.escape(start_tag[1:-1])}(\s.*?)?>'
@@ -2643,6 +2783,12 @@ async def process_chat_payload(request, form_data, user, metadata, model):
     use_builtin_tools = (
         chat and (chat.meta or {}).get('internal') is True and (chat.meta or {}).get('type') == 'note'
     ) or (
+        # Keep this tied to session_id. Voice callers were briefly allowed in here
+        # so native FC could search only when needed, but nothing executes tool
+        # calls on the external-API passthrough path: the stream just ended on
+        # finish_reason=tool_calls and the caller got a tool request it cannot run,
+        # so the answer never arrived. Voice grounding goes through legacy search
+        # in main.py instead.
         bool(metadata.get('session_id'))
         and metadata.get('params', {}).get('function_calling') != 'legacy'
         and (model.get('info', {}).get('meta', {}).get('capabilities') or {}).get('builtin_tools', True)
@@ -5601,6 +5747,16 @@ async def streaming_chat_response_handler(response, ctx):
             def wrap_item(item):
                 return f'data: {item}\n\n'
 
+            # External API callers (ElevenLabs Agents, phone) have no chat_id or
+            # session, so they land here and get the model stream verbatim —
+            # including <think> blocks, which a voice client happily reads aloud.
+            # Reasoning models differ on suppressing it: MiniMax-M3 honours the
+            # custom_params thinking flag set in main.py, M2.7 (Abby-Bot's base)
+            # ignores that and every other documented switch, so the tags have to
+            # come off here. Voice callers only — typed chat is untouched, and so
+            # is every non-voice API caller.
+            reasoning_stripper = _ReasoningStripper() if metadata.get('voice_mode') else None
+
             assistant_message = {}
             filter_context = FilterContext()
             has_api_outlet_filters = ENABLE_API_OUTLET_FILTERS and bool(filter_functions)
@@ -5638,6 +5794,10 @@ async def streaming_chat_response_handler(response, ctx):
                 )
 
                 if data:
+                    if reasoning_stripper is not None:
+                        data = reasoning_stripper.filter_sse(data)
+                        if data is None:
+                            continue
                     if has_api_outlet_filters:
                         update_assistant_message_from_stream(assistant_message, data)
                     yield data

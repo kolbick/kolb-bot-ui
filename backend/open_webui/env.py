@@ -963,6 +963,11 @@ DEFAULT_GROUP_SHARE_PERMISSION = 'members' if _default_group_share == 'members' 
 
 ENABLE_CUSTOM_MODEL_FALLBACK = os.getenv('ENABLE_CUSTOM_MODEL_FALLBACK', 'False').lower() == 'true'
 
+# Force a web search on every spoken turn (voice callers only — see main.py).
+# Off by default: it adds 10-30s to first word, and ElevenLabs Agents hard-cap
+# their LLM wait at 15s, so enabling this makes calls drop mid-conversation.
+VOICE_WEB_SEARCH = os.getenv('OPEN_WEBUI_VOICE_WEB_SEARCH', 'False').lower() == 'true'
+
 MODELS_CACHE_TTL = os.getenv('MODELS_CACHE_TTL', '1')
 if MODELS_CACHE_TTL == '':
     MODELS_CACHE_TTL = None

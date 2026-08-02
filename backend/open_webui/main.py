@@ -82,6 +82,7 @@ from open_webui.env import (
     ENABLE_AUDIT_GET_REQUESTS,
     ENABLE_COMPRESSION_MIDDLEWARE,
     ENABLE_CUSTOM_MODEL_FALLBACK,
+    VOICE_WEB_SEARCH,
     ENABLE_EASTER_EGGS,
     ENABLE_PLUGINS,
     EXTERNAL_PWA_MANIFEST_URL,
@@ -1106,6 +1107,43 @@ async def chat_completion(
                 **request_params,
             }
 
+        # A spoken reply makes a visible thinking block dead air before the first word,
+        # so skip it for voice: the in-app call overlay sets features.voice, and external
+        # voice clients (e.g. ElevenLabs Agents) send the header. Typed chat keeps
+        # reasoning on, and an explicit per-request thinking param still wins.
+        voice_mode = bool((form_data.get('features') or {}).get('voice')) or request.headers.get(
+            'x-voice-mode', ''
+        ).strip().lower() in ('1', 'true', 'yes')
+        if voice_mode:
+            voice_params = form_data.setdefault('params', {})
+            voice_params.setdefault('custom_params', {}).setdefault('thinking', {'type': 'disabled'})
+
+            # Force legacy mode so voice shares the model's attached knowledge.
+            #
+            # Native function calling cannot work for an external voice client:
+            # the tool-executing pipeline delivers its answer over the websocket
+            # (utils/middleware.py response_handler returns nothing over HTTP) and
+            # only runs when chat_id + message_id exist, which ElevenLabs has not
+            # got. Native FC therefore ends the stream on finish_reason=tool_calls
+            # with no answer at all. Legacy retrieves instead of calling tools —
+            # it pulls the knowledge in before the model runs and injects it into
+            # the prompt, which works fine over plain SSE.
+            #
+            # A direct assignment, not setdefault: the global/model default already
+            # set function_calling to 'native' above, so setdefault would no-op.
+            voice_params['function_calling'] = 'legacy'
+
+            # Live web search is the expensive half and stays opt-in. Knowledge
+            # retrieval hits a local vector store; web search fetches real pages,
+            # which measured 10-30s to first word — and ElevenLabs hard-caps its
+            # LLM wait at 15s (the API rejects anything larger), so forcing it on
+            # every spoken turn killed calls mid-conversation. Set
+            # OPEN_WEBUI_VOICE_WEB_SEARCH=true to trade that latency back for live
+            # grounding. Typed chat is unaffected and still searches normally.
+            if VOICE_WEB_SEARCH:
+                voice_features = form_data.setdefault('features', {})
+                voice_features.setdefault('web_search', True)
+
         # Check base model existence for custom models
         if model_info and model_info.base_model_id:
             base_model_id = model_info.base_model_id
@@ -1206,6 +1244,9 @@ async def chat_completion(
             'chat_variables': chat_variables,
             'model': model,
             'direct': model_item.get('direct', False),
+            # Read downstream by the external-API streaming fallback in
+            # utils/middleware.py, which strips reasoning spans for voice callers.
+            'voice_mode': voice_mode,
             'params': {
                 'stream_delta_chunk_size': stream_delta_chunk_size,
                 'reasoning_tags': reasoning_tags,
@@ -2705,8 +2746,26 @@ async def oauth_backchannel_logout(
     return await oauth_manager.handle_backchannel_logout(request, db=db)
 
 
+async def _get_pwa_persona_user(request: Request):
+    """Best-effort lookup of the logged-in user for personalizing PWA assets
+    (home screen icon, manifest name) per Kolby vs. Abby's iPhone. Never
+    raises -- an expired/missing/garbled cookie just falls back to the
+    default (Kolby) branding rather than breaking icon/manifest loading.
+    """
+    token = request.cookies.get('token')
+    if not token:
+        return None
+    try:
+        data = decode_token(token)
+        if data is not None and 'id' in data:
+            return await Users.get_user_by_id(data['id'])
+    except Exception:
+        pass
+    return None
+
+
 @app.get('/manifest.json')
-async def get_manifest_json():
+async def get_manifest_json(request: Request):
     external_pwa_manifest_url = getattr(app.state, 'EXTERNAL_PWA_MANIFEST_URL', None)
     if external_pwa_manifest_url:
         session = await get_session()
@@ -2717,22 +2776,28 @@ async def get_manifest_json():
             r.raise_for_status()
             return await r.json()
     else:
+        user = await _get_pwa_persona_user(request)
+        is_abby = user is not None and user.role != 'admin'
+
+        name = 'Abby-Bot' if is_abby else app.state.WEBUI_NAME
+        logo_src = '/static/logo-abby.png' if is_abby else '/static/logo.png'
+
         return {
-            'name': app.state.WEBUI_NAME,
-            'short_name': app.state.WEBUI_NAME,
-            'description': f'{app.state.WEBUI_NAME} is an open, extensible, user-friendly interface for AI that adapts to your workflow.',
+            'name': name,
+            'short_name': name,
+            'description': f'{name} is an open, extensible, user-friendly interface for AI that adapts to your workflow.',
             'start_url': '/',
             'display': 'standalone',
             'background_color': '#12001f',
             'icons': [
                 {
-                    'src': '/static/logo.png',
+                    'src': logo_src,
                     'type': 'image/png',
                     'sizes': '500x500',
                     'purpose': 'any',
                 },
                 {
-                    'src': '/static/logo.png',
+                    'src': logo_src,
                     'type': 'image/png',
                     'sizes': '500x500',
                     'purpose': 'maskable',
@@ -2744,6 +2809,14 @@ async def get_manifest_json():
                 'params': {'text': 'shared'},
             },
         }
+
+
+@app.get('/apple-touch-icon.png')
+async def get_apple_touch_icon(request: Request):
+    user = await _get_pwa_persona_user(request)
+    is_abby = user is not None and user.role != 'admin'
+    filename = 'apple-touch-icon-abby.png' if is_abby else 'apple-touch-icon.png'
+    return FileResponse(STATIC_DIR / filename, media_type='image/png')
 
 
 @app.get('/opensearch.xml')
