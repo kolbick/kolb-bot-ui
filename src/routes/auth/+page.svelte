@@ -221,7 +221,7 @@
 	<div class="auth-glow auth-glow-top" aria-hidden="true"></div>
 	<div class="auth-glow auth-glow-bottom" aria-hidden="true"></div>
 
-	<div class="w-full absolute top-0 left-0 right-0 h-8 drag-region" />
+	<div class="w-full absolute top-0 left-0 right-0 h-8 drag-region pt-safe" />
 
 	{#if loaded}
 		<div

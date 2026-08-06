@@ -71,6 +71,7 @@
 		removeAllDetails
 	} from '$lib/utils';
 	import { setTextScale } from '$lib/utils/text-scale';
+	import { initStandalonePwaClasses } from '$lib/utils/pwa';
 
 	import NotificationToast from '$lib/components/NotificationToast.svelte';
 	import AppSidebar from '$lib/components/app/AppSidebar.svelte';
@@ -1016,11 +1017,13 @@
 		}
 
 		const touchstartHandler = (e) => {
+			if (document.documentElement.classList.contains('standalone')) return;
 			if (!isNavOrDescendant(e.target)) return;
 			touchstartY = e.touches[0].clientY;
 		};
 
 		const touchmoveHandler = (e) => {
+			if (document.documentElement.classList.contains('standalone')) return;
 			if (!isNavOrDescendant(e.target)) return;
 			const touchY = e.touches[0].clientY;
 			const touchDiff = touchY - touchstartY;
@@ -1031,6 +1034,7 @@
 		};
 
 		const touchendHandler = (e) => {
+			if (document.documentElement.classList.contains('standalone')) return;
 			if (!isNavOrDescendant(e.target)) return;
 			if (showRefresh) {
 				showRefresh = false;
@@ -1041,6 +1045,8 @@
 		document.addEventListener('touchstart', touchstartHandler);
 		document.addEventListener('touchmove', touchmoveHandler, { passive: false });
 		document.addEventListener('touchend', touchendHandler);
+
+		initStandalonePwaClasses();
 
 		if (typeof window !== 'undefined') {
 			if (window.applyTheme) {
@@ -1297,6 +1303,9 @@
 	<link crossorigin="anonymous" rel="icon" href="{WEBUI_BASE_URL}/static/favicon.png" />
 
 	<meta name="apple-mobile-web-app-title" content={$WEBUI_NAME} />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="mobile-web-app-capable" content="yes" />
+	<meta name="format-detection" content="telephone=no" />
 	<meta name="description" content={$WEBUI_NAME} />
 	<link
 		rel="search"
