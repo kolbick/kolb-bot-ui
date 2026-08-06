@@ -2746,11 +2746,15 @@ async def oauth_backchannel_logout(
     return await oauth_manager.handle_backchannel_logout(request, db=db)
 
 
+ABBY_PWA_EMAIL = 'ateed120@gmail.com'
+ABBY_PWA_ICON_BASE = '/static/user-icons/abby-bot'
+
+
 async def _get_pwa_persona_user(request: Request):
-    """Best-effort lookup of the logged-in user for personalizing PWA assets
-    (home screen icon, manifest name) per Kolby vs. Abby's iPhone. Never
-    raises -- an expired/missing/garbled cookie just falls back to the
-    default (Kolby) branding rather than breaking icon/manifest loading.
+    """Best-effort lookup for email-specific PWA branding.
+
+    An expired, missing, or malformed cookie falls back to the default
+    Kolb-Bot branding rather than breaking icon or manifest loading.
     """
     token = request.cookies.get('token')
     if not token:
@@ -2777,32 +2781,54 @@ async def get_manifest_json(request: Request):
             return await r.json()
     else:
         user = await _get_pwa_persona_user(request)
-        is_abby = user is not None and user.role != 'admin'
+        is_abby = (
+            user is not None
+            and (user.email or '').lower() == ABBY_PWA_EMAIL
+        )
 
-        name = 'Abby-Bot' if is_abby else app.state.WEBUI_NAME
-        logo_src = '/static/logo-abby.png' if is_abby else '/static/logo.png'
+        name = 'ABBY-BOT' if is_abby else app.state.WEBUI_NAME
+        icons = (
+            [
+                {
+                    'src': f'{ABBY_PWA_ICON_BASE}/web-app-manifest-192x192.png',
+                    'type': 'image/png',
+                    'sizes': '192x192',
+                    'purpose': 'maskable',
+                },
+                {
+                    'src': f'{ABBY_PWA_ICON_BASE}/web-app-manifest-512x512.png',
+                    'type': 'image/png',
+                    'sizes': '512x512',
+                    'purpose': 'maskable',
+                },
+            ]
+            if is_abby
+            else [
+                {
+                    'src': '/static/logo.png',
+                    'type': 'image/png',
+                    'sizes': '500x500',
+                    'purpose': 'any',
+                },
+                {
+                    'src': '/static/logo.png',
+                    'type': 'image/png',
+                    'sizes': '500x500',
+                    'purpose': 'maskable',
+                },
+            ]
+        )
 
         return {
             'name': name,
             'short_name': name,
             'description': f'{name} is an open, extensible, user-friendly interface for AI that adapts to your workflow.',
             'start_url': '/',
+            'scope': '/',
             'display': 'standalone',
+            'orientation': 'portrait-primary',
             'background_color': '#12001f',
-            'icons': [
-                {
-                    'src': logo_src,
-                    'type': 'image/png',
-                    'sizes': '500x500',
-                    'purpose': 'any',
-                },
-                {
-                    'src': logo_src,
-                    'type': 'image/png',
-                    'sizes': '500x500',
-                    'purpose': 'maskable',
-                },
-            ],
+            'icons': icons,
             'share_target': {
                 'action': '/',
                 'method': 'GET',
@@ -2814,8 +2840,15 @@ async def get_manifest_json(request: Request):
 @app.get('/apple-touch-icon.png')
 async def get_apple_touch_icon(request: Request):
     user = await _get_pwa_persona_user(request)
-    is_abby = user is not None and user.role != 'admin'
-    filename = 'apple-touch-icon-abby.png' if is_abby else 'apple-touch-icon.png'
+    is_abby = (
+        user is not None
+        and (user.email or '').lower() == ABBY_PWA_EMAIL
+    )
+    filename = (
+        'user-icons/abby-bot/apple-touch-icon.png'
+        if is_abby
+        else 'apple-touch-icon.png'
+    )
     return FileResponse(STATIC_DIR / filename, media_type='image/png')
 
 
