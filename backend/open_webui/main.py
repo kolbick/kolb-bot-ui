@@ -2750,6 +2750,10 @@ ABBY_PWA_EMAIL = 'ateed120@gmail.com'
 ABBY_PWA_ICON_BASE = '/static/user-icons/abby-bot'
 
 
+def _is_abby_pwa_user(user) -> bool:
+    return user is not None and (user.email or '').lower() == ABBY_PWA_EMAIL
+
+
 async def _get_pwa_persona_user(request: Request):
     """Best-effort lookup for email-specific PWA branding.
 
@@ -2781,10 +2785,7 @@ async def get_manifest_json(request: Request):
             return await r.json()
     else:
         user = await _get_pwa_persona_user(request)
-        is_abby = (
-            user is not None
-            and (user.email or '').lower() == ABBY_PWA_EMAIL
-        )
+        is_abby = _is_abby_pwa_user(user)
 
         name = 'ABBY-BOT' if is_abby else app.state.WEBUI_NAME
         icons = (
@@ -2822,7 +2823,10 @@ async def get_manifest_json(request: Request):
         return {
             'name': name,
             'short_name': name,
-            'description': f'{name} is an open, extensible, user-friendly interface for AI that adapts to your workflow.',
+            'description': (
+                f'{name} is an open, extensible, user-friendly interface for AI '
+                'that adapts to your workflow.'
+            ),
             'start_url': '/',
             'scope': '/',
             'display': 'standalone',
@@ -2840,10 +2844,7 @@ async def get_manifest_json(request: Request):
 @app.get('/apple-touch-icon.png')
 async def get_apple_touch_icon(request: Request):
     user = await _get_pwa_persona_user(request)
-    is_abby = (
-        user is not None
-        and (user.email or '').lower() == ABBY_PWA_EMAIL
-    )
+    is_abby = _is_abby_pwa_user(user)
     filename = (
         'user-icons/abby-bot/apple-touch-icon.png'
         if is_abby
