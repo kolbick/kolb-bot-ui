@@ -78,7 +78,9 @@ export function applyUserPwaBranding(email?: string | null, fallbackAppName = 'K
 	root.classList.toggle('user-pwa-branded', isAbby);
 	setLinkHref('apple-touch-icon', isAbby ? ABBY_PWA_ICON : DEFAULT_PWA_ICON, '180x180');
 
-	const titleMeta = document.querySelector<HTMLMetaElement>('meta[name="apple-mobile-web-app-title"]');
+	const titleMeta = document.querySelector<HTMLMetaElement>(
+		'meta[name="apple-mobile-web-app-title"]'
+	);
 	if (titleMeta) {
 		titleMeta.content = isAbby ? ABBY_PWA_APP_NAME : fallbackAppName;
 	}

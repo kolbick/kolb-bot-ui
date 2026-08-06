@@ -245,13 +245,12 @@
 					</div>
 				{:else}
 					<div class="my-auto flex flex-col justify-center items-center">
-						<div id="auth-login-card" class="auth-panel sm:max-w-md my-auto pb-10 w-full dark:text-gray-100">
+						<div
+							id="auth-login-card"
+							class="auth-panel sm:max-w-md my-auto pb-10 w-full dark:text-gray-100"
+						>
 							<div class="auth-logo-wrap flex justify-center mb-5">
-								<img
-									src="/logo-auth.png"
-									class="auth-logo"
-									alt="{$WEBUI_NAME} mascot"
-								/>
+								<img src="/logo-auth.png" class="auth-logo" alt="{$WEBUI_NAME} mascot" />
 							</div>
 							<form
 								class=" flex flex-col justify-center"
@@ -606,7 +605,6 @@
 				{/if}
 			</div>
 		</div>
-
 	{/if}
 </div>
 

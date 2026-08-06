@@ -156,8 +156,7 @@
 		const isDarkTheme =
 			_theme.includes('dark') ||
 			_theme === 'her' ||
-			(_theme.includes('system') &&
-				window.matchMedia('(prefers-color-scheme: dark)').matches);
+			(_theme.includes('system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
 		updateIosStatusBarStyle(isDarkTheme);
 
