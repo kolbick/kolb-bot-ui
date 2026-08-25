@@ -380,7 +380,7 @@
 
 	let finishedMessages = {};
 	let currentMessageId = null;
-	let currentUtterance = null;
+	let currentUtterance: SpeechSynthesisUtterance | null = null;
 
 	// Get voice: model-specific > user settings > config default
 	const getVoiceId = () => {
@@ -427,7 +427,7 @@
 		}
 	};
 
-	const playAudio = (audio) => {
+	const playAudio = (audio: HTMLAudioElement) => {
 		if ($showCallOverlay) {
 			return new Promise((resolve) => {
 				const audioElement = document.getElementById('audioElement') as HTMLAudioElement;
@@ -495,7 +495,7 @@
 			currentUtterance = null;
 		}
 
-		const audioElement = document.getElementById('audioElement');
+		const audioElement = document.getElementById('audioElement') as HTMLAudioElement;
 		if (audioElement) {
 			audioElement.muted = true;
 			audioElement.pause();
@@ -514,7 +514,12 @@
 			try {
 				// Set the emoji for the content if needed
 				if ($settings?.showEmojiInCall ?? false) {
-					const emoji = await generateEmoji(localStorage.token, modelId, content, chatId);
+					const emoji = await generateEmoji(localStorage.token, modelId, content, chatId).catch(
+						(error) => {
+							console.error(error);
+							return null;
+						}
+					);
 					if (emoji) {
 						emojiCache.set(content, emoji);
 					}

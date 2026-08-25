@@ -358,6 +358,9 @@ async def test_target(user_id: str, target_id: str, app_name: str = 'Kolb-Bot') 
     return {'ok': True}
 
 
+# LICENSE covers this Open WebUI notification identifier.
+# Do not alter, remove, obscure, or replace it except as LICENSE permits:
+# https://docs.openwebui.com/license.
 async def notify_target(
     user_id: str, message: str, target: str = '', title: str = '', app_name: str = 'Kolb-Bot'
 ) -> dict[str, Any]:

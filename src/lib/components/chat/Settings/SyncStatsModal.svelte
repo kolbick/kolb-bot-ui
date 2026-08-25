@@ -375,6 +375,9 @@
 				</div>
 
 				<div class="mt-2 text-xs text-gray-500">
+					<!-- LICENSE covers this Open WebUI wordmark.
+					Do not alter, remove, obscure, or replace it except as LICENSE permits:
+					https://docs.openwebui.com/license. -->
 					{$i18n.t(
 						'Participate in community leaderboards and evaluations! Syncing aggregated usage stats helps drive research and improvements to Kolb-Bot. Your privacy is paramount: no message content is ever shared.'
 					)}
