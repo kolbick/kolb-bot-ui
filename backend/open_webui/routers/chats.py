@@ -1334,14 +1334,6 @@ async def get_chat_by_id(
         db=db,
     )
 
-            # Check folder-based access (shared folders)
-            if not chat:
-                candidate = await Chats.get_chat_by_id(id, db=db)
-                if candidate and candidate.folder_id:
-                    folder = await Folders.get_folder_by_id(candidate.folder_id, db=db)
-                    if folder and await has_folder_access(user.id, folder, 'read', db):
-                        chat = candidate
-
     if chat:
         data = ChatResponse.model_validate(chat, from_attributes=True).model_dump()
         data = overlay_response_streams(

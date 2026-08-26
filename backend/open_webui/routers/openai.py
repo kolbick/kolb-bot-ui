@@ -2170,9 +2170,6 @@ async def responses(
     if api_config.get('auth_type') == CHATGPT_AUTH_TYPE:
         payload['store'] = False
         payload.pop('previous_response_id', None)
-    body = json.dumps(payload)
-
-    payload['model'] = strip_provider_model_prefix(payload['model'], api_config.get('prefix_id'))
     body = JSONCodec.dumps(payload)
 
     r = None

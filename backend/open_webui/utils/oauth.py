@@ -25,6 +25,7 @@ from fastapi import (
 )
 from joserfc.errors import BadSignatureError
 from joserfc.jws import JWSRegistry
+from joserfc.registry import HeaderParameter
 from mcp.shared.auth import (
     OAuthClientMetadata as MCPOAuthClientMetadata,
 )
